@@ -1,12 +1,6 @@
 % function max_avg_MNI(sz_nns_mat,sz_w8s_mat,szxyz_mat,mni_xyz_cell, npt,hem)
 
 
-mni_mesh_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA/avg_change_folders/cvs_avg35_inMNI152/Imaging/Meshes/';
-
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA/avg_change_folders/cvs_avg35_inMNI152/Imaging/Meshes/');
-
-
-npt=length(manual_ptsz);
 
 %4/28 TO DO: 
 %   1.  INDEX E- WITHIN 5MM OF EACH VERTEX INTO VECTOR (USE "FIND" TO INDEX)
@@ -19,6 +13,11 @@ npt=length(manual_ptsz);
 
 %%
 
+mni_mesh_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA/avg_change_folders/cvs_avg35_inMNI152/Imaging/Meshes/';
+
+cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA/avg_change_folders/cvs_avg35_inMNI152/Imaging/Meshes/');
+
+npt=length(manual_ptsz);
 
 %INPUT HERE
 dst_radius = 10; % minimum distance in mm from electrode to each vertex
@@ -29,6 +28,8 @@ hem='l';
 load([mni_mesh_path 'cvs_avg35_inMNI152_' hem 'h_pial.mat']); %load right mni vertices
 mni_h = cortex.vert;
 nvert=size(mni_h,1);
+
+cd('/Users/nataliasucher/Desktop/UCSF/Coding/OPSCEA')
 
 max_w8s_rad=nan(nvert,npt);
 numelecclose=nan(nvert,npt);
@@ -59,7 +60,7 @@ haselecclose=numelecclose>0; %logical index of whether a patient has at least on
 
 %%
 figure('color','w','position',[230 171 1440 796])
-minnumpts=2;
+minnumpts=1;
 nptAtVerts=sum(haselecclose,2);
 nptPositive=sum(max_w8s_rad>0,2); 
 percentPositive=nptPositive./nptAtVerts; 
@@ -73,7 +74,7 @@ hold on
     pause(1)
 for v_m = 1:nvert
     if nptAtVerts(v_m)>=minnumpts
-        plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color',[1 -percentPositive(v_m)+1 -percentPositive(v_m)+1],'markersize',15);
+        plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color',[percentPositive(v_m) 0 0],'markersize',15);
         disp([num2str(round(v_m/nvert*100,2)) '%'])
     end
 end
