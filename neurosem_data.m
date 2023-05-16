@@ -1,6 +1,6 @@
 % Natalia Sucher in the Kleen Lab, UCSF
 % Created 1/31/2023
-% Edited 4/24/2023
+% Edited 5/13/2023
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,7 +21,7 @@ avg_path= [opscea_path 'OPSCEADATA/avg_change_folders/'];   %path for parameters
  
 % EDIT THIS TO REFLECT THE SYMPTOM
 % sx_input = {'lhx','rhx','lud','rud', 'lup','rup'};
-sx_input = {'chx'}; %,'cup'};
+sx_input = {'chx'}; %{'cup'};; %{'chx'}; 
 % sx_input = {'cex','cnx','cmx','cup','cud','cld','clp','fax','oax'};
 
 % EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
@@ -49,6 +49,8 @@ sxmx_count = 0;
 reg_all = {'stg','mtg','itg','fus','tp','ph','hp','am','ent','pt','po','por','cmf','rmf','sf','sm','mof','lof','fp','prec','postc'};
 % reg_all = {'prec'};
 
+% CHOOSE RADIUS HERE
+dst_radius = 10; % minimum distance in mm from electrode to each vertex
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,6 +89,9 @@ sz_w8s_mat = cell(1,length(manual_ptsz));
 szxyz_mat = cell(1,length(manual_ptsz));
 
 mni_xyz_cell = cell(1,length(manual_ptsz));
+
+elecs_msize = zeros(2,length(manual_ptsz));
+e_max_vec = ones(length(reg_all),length(manual_ptsz));
 
 for sx_i = 1:length(sx_input) % for loop throughout symptoms
     sx_name = sx_input{sx_i};
@@ -134,29 +139,30 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
                 elseif isL
                     pt_sxmx_name(1) = 'r';
                     lat_sxmx{sz_count} = pt_sxmx_name; % add to cell of symptoms with laterality
+
 %                     lat_brain_vec{sz_count} = 'l';
                 end
                 %%%%%%%%%%%%
 
 
-                if mni == 1
-                    if exist([avg_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat']) == 2
-                        load([avg_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat'],'elecmatrix');
-                        mni_xyz = elecmatrix;
-                    elseif exist([avg_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat']) == 2
-                        load([avg_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat'],'elecmatrix');
-                        mni_xyz = elecmatrix;
-                    else
-                        [elecmatrix, ~] = make_clinical_elec_all_warped(pt_name);
-                        mni_xyz = elecmatrix;
-                        %todo: delete nans from elecmatrix to be same size as szxyz -- follow activity_change.py (retranslate it into matlab)
-                    end
-                    save('mni_elecmatrix.mat','mni_xyz')
-                    clear elecmatrix;
-
+%                 if mni == 1
+                if exist([avg_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat']) == 2
+                    load([avg_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat'],'elecmatrix');
+                    mni_xyz = elecmatrix;
+                elseif exist([avg_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat']) == 2
+                    load([avg_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat'],'elecmatrix');
+                    mni_xyz = elecmatrix;
                 else
-                    continue
+                    [elecmatrix, ~] = make_clinical_elec_all_warped(pt_name);
+                    mni_xyz = elecmatrix;
+                    %todo: delete nans from elecmatrix to be same size as szxyz -- follow activity_change.py (retranslate it into matlab)
                 end
+                save('mni_elecmatrix.mat','mni_xyz')
+                clear elecmatrix;
+% 
+%                 else
+%                     mni_xyz = em1;
+%                 end
 
 
                 cd(opscea_path)
@@ -167,18 +173,8 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
                 len_good_mni = length(good_mni_list)-1;
     
 
-                [c_pv_labels, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
+                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
            
-                %%%%%%%%%%%%
-
-                if sz_count == 1
-                    c_anat_w8s = cell(length(anat_cell),2,length(manual_ptsz));
-                end
-
-                c_anat_w8s(1:length(anat_cell),1,ptsz_i) = anat_cell(:);
-                c_anat_w8s(1:length(anat_cell),2,ptsz_i) = w8_cell(:);
-
-                %%%%%%%%%%%                
 
 
             % TO DO: DELETE THIS IF/ELSE CONDITIONAL, SMUSH INTO ONE
@@ -196,16 +192,10 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
                 [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, avg_path=avg_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
                 
-                [c_pv_labels, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);
+                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);
 
 
-                if sz_count == 1
-                    c_anat_w8s = cell(length(anat_cell)+1,2,length(manual_ptsz));
-                end
-               
-                c_anat_w8s(1:length(anat_cell),1,ptsz_i) = anat_cell(:);
-                c_anat_w8s(1:length(anat_cell),2,ptsz_i) = w8_cell(:);
-            
+
             end
             
             
@@ -222,62 +212,35 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
                 cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'); 
 
                 if mni == 1
-                    pt_brain_elecs(manual_ptsz{ptsz_i},"MNI",reg_all{reg_i},lat_sxmx{sz_count}, mni_xyz, anatomy, reg_count);
+                    [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},"MNI",reg_all{reg_i},lat_sxmx{sz_count}, mni_xyz, anatomy, reg_count);
                 else
-                    pt_brain_elecs(manual_ptsz{ptsz_i},pt_name,reg_all{reg_i},lat_sxmx{sz_count}, em1, anatomy, reg_count);
+                    [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},pt_name,reg_all{reg_i},lat_sxmx{sz_count}, em1, anatomy, reg_count);
                 end
+
+                e_max_vec(reg_i,ptsz_i) = e_max;
             end
 
             mni_xyz_cell{ptsz_i} = good_mni_mat;
             sz_nns_mat{1,ptsz_i} =  sz_nns;
             sz_w8s_mat{1,ptsz_i} = sz_w8s; 
             szxyz_mat{1,ptsz_i} = szxyz;
-
+            elecs_msize(1,ptsz_i) = max(e_max_vec(:,ptsz_i));
         end
       end 
 end 
 
 cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
 
-max_avg_MNI(sz_nns_mat,sz_w8s_mat,szxyz_mat,mni_xyz_cell,length(manual_ptsz))
+% [u_lat, ~, j] = unique(lat_sxmx); %separate cell array of 'r' and 'l' into the 2 categories in alphabetical order ('l' is first, 'r' is second)
+% l_num = sum(j==2); % number of patients with brain left laterality 
+% r_num = sum(j==1); % number of patients with brain right laterality 
 
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA/');
+% npt = sum(~cellfun(@isempty,sz_w8s_mat),2); %number of patients with symptom 
 
-cx_pv_full_pos = NaN(length(c_pv_labels),length(manual_ptsz),length(sx_input));
-cx_pv_full_neg = NaN(length(c_pv_labels),length(manual_ptsz),length(sx_input));
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius) %vertex heatmap on left hemisphere of brain
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius) %vertex heatmap on right hemisphere of brain
 
-no_lat_sx_cell = {};
-
-all_sheets = string(sheetnames('all_pv.xlsx'));
-pos_sheets = string(sheetnames('pos_pv.xlsx'));
-neg_sheets = string(sheetnames('neg_pv.xlsx'));
-
-for a = 1:length(all_sheets)
-
-    all_pv_M = readmatrix('all_pv.xlsx', 'Sheet', all_sheets(a));
-    [m_row_a, m_col_a] = size(all_pv_M);
-    sheet_str = cellstr(all_sheets(a));
-    no_lat_sx_cell{a} = join(['c',sheet_str{1}(2:3)]); % capture symptom name without laterality in order of sheets as cell array
-        
-    pos_pv_M = readmatrix('pos_pv.xlsx', 'Sheet', pos_sheets(a));
-    pos_pv_M = pos_pv_M(1:m_row_a,2:m_col_a);
-  
-    neg_pv_M = readmatrix('neg_pv.xlsx', 'Sheet', neg_sheets(a));
-    neg_pv_M = neg_pv_M(1:m_row_a,2:m_col_a);
-
-    for s_i = 1:length(sx_input)
-        if no_lat_sx_cell{a} == sx_input{s_i}
-            for m = 1:m_col_a-1
-                if any(pos_pv_M(:,m))
-                    cx_pv_full_pos(1:m_row_a,m,s_i) = pos_pv_M(:,m);
-                end
-                if any(neg_pv_M(:,m))
-                    cx_pv_full_neg(1:m_row_a,m,s_i) = neg_pv_M(:,m);
-                end
-            end
-        end
-    end   
-end
+bin_bilat
 
 cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/') %place so you don't have to change paths every time you run the code
 

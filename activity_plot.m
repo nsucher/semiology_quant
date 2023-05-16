@@ -223,6 +223,11 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
     else
         w8_cell = {};
         anat_cell = {};
+        sz_nns = 0;
+        szxyz=[];
+        loaf = [];
+        sz_w8s = [];
+
     end
 
 end
