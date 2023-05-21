@@ -21,7 +21,7 @@ avg_path= [opscea_path 'OPSCEADATA/avg_change_folders/'];   %path for parameters
  
 % EDIT THIS TO REFLECT THE SYMPTOM
 % sx_input = {'lhx','rhx','lud','rud', 'lup','rup'};
-sx_input = {'chx'}; %{'cup'};; %{'chx'}; 
+sx_input = {'cld'}; %{'cup'};; %{'chx'}; 
 % sx_input = {'cex','cnx','cmx','cup','cud','cld','clp','fax','oax'};
 
 % EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
@@ -92,6 +92,8 @@ mni_xyz_cell = cell(1,length(manual_ptsz));
 
 elecs_msize = zeros(2,length(manual_ptsz));
 e_max_vec = ones(length(reg_all),length(manual_ptsz));
+
+num_elecs = [];
 
 for sx_i = 1:length(sx_input) % for loop throughout symptoms
     sx_name = sx_input{sx_i};
@@ -198,6 +200,9 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
             end
             
+            for w_anat = 2:length(w8s_array)
+                num_elecs(w_anat-1,ptsz_i) = length(w8_cell{1,w_anat-1});
+            end
             
             for m = 1:len_good_mni
                 for xyz = 1:3
@@ -229,7 +234,16 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
       end 
 end 
 
+
 cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
+
+close all 
+
+bin_bilat
+
+pv_all_brain(lat_sxmx,length(manual_ptsz),num_elecs,min_elec)
+
+% 
 
 % [u_lat, ~, j] = unique(lat_sxmx); %separate cell array of 'r' and 'l' into the 2 categories in alphabetical order ('l' is first, 'r' is second)
 % l_num = sum(j==2); % number of patients with brain left laterality 
@@ -238,11 +252,15 @@ cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
 % npt = sum(~cellfun(@isempty,sz_w8s_mat),2); %number of patients with symptom 
 
 max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius) %vertex heatmap on left hemisphere of brain
-max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius) %vertex heatmap on right hemisphere of brain
-
-bin_bilat
 
 cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/') %place so you don't have to change paths every time you run the code
+
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius) %vertex heatmap on right hemisphere of brain
+
+
+
+cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/') %place so you don't have to change paths every time you run the code
+
 
 
 toc

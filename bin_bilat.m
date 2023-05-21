@@ -40,22 +40,11 @@ end
 Mbin=M>0; %any average weight values above zero for each patient in each square
 Mnpt=sum(~isnan(M),3);
 Mptsig=sum(Mbin,3);
+Mpercent = Mptsig'./Mnpt'*100;
 
 
-R = linspace(1,0,50); % Red from 1 to 0
-G = linspace(.5,0,50); % Green from 1 to 0
-B = zeros(1,50);
 
-rgb = [R(:), G(:), B(:)];
-orange_juice = flipud(rgb);
-orange_juice(1,:) = [1 1 1]; %set zero equal to white
-
-orange_juice = colormap(orange_juice);
-
-pink_lemonade = flipud(spring);
-pink_lemonade(1,:) = [1 1 1]; %set zero equal to white
-
-figure('color','w');
+figure('color','w','position',[230 171 1000 796]);
 
 ax1 = subplot(2,2,1); 
 getbrain4_ns('MNI','',1,0,'r'); %brain for orientation
@@ -67,29 +56,64 @@ axis equal; axis off; set(gca,'clipping','off'); lightsout; litebrain('r',1)
 ylim(Y([1 end])); zlim(Z([1 end])); %in same axis limits for orientation
 axis on
 set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
-alpha .1 % transparency to see the grid lines better
+alpha .5 % transparency to see the grid lines better
 
-colormap(ax1,colormap([1 1 1]))
+% colormap(ax1,colormap([1 1 1]))
 
-ax3 = subplot(2,2,3); % total significant patients per square
-pcolor(Mptsig'); 
-axis equal; axis off; 
-colormap(ax3,orange_juice)
 
 % axis on
 % set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
-ax2 = subplot(2,2,2); %total patients per square
-pcolor(Mnpt'); 
-axis equal; axis off; 
-colormap(ax2,pink_lemonade)
 % grid on;
 % axis on
 % set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
 
+%colors
+% pink_lemonade = colormap(spring);
+% pink_lemonade(1,:) = [1 1 1]; %set zero equal to white
+
+% raspberry=makecm([0 0 0;0 1 1],7); %red-black colormap
+% raspberry = [1 1 1; raspberry];
+
+% 
+% mintyfresh=makecm([0 1 1;0 0 0],7); %cyan-black colormap
+% mintyfresh(1,:) = [1 1 1];
+% 
+
+% cm_npt = cbrewer2('Purples',7,'seq');
+% cm_npt = [1 1 1; cm_npt];
+
+
+ax3 = subplot(2,2,3); % total significant patients per square
+pcolor(Mptsig'); 
+axis equal; axis off; 
+% colormap(ax3,raspberry)
+% figure('color','w')
+cm_sig = cbrewer2('PuRd',7,'seq');
+cm_sig = [1 1 1; cm_sig];
+colormap(ax3,cm_sig)
+% colorbar
+
+
+
 ax4 = subplot(2,2,4);  %percent sigificant patients per square
-pcolor(Mptsig'./Mnpt'*100); 
+pcolor(Mpercent); 
 axis equal; axis off;
-colormap(ax4,jet)
+cm_percent = cbrewer2('Reds','seq'); %color map
+colormap(ax4,cm_percent)
+
+% colormap(ax4,pink_lemonade)
+
+ax2 = subplot(2,2,2); %total patients per square
+pcolor(Mnpt'); 
+axis equal; axis off; 
+% colormap(ax2,mintyfresh)
+cm_npt = cbrewer2('Purples',7,'seq');
+cm_npt = [1 1 1; cm_npt];
+colormap(ax2,cm_npt)
+
+
+
+
 % colormap(spring)
 
 
