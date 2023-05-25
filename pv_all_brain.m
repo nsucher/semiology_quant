@@ -1,4 +1,4 @@
-function pv_all_brain(lat_sxmx,npt,num_elecs,min_elec)
+function pv_all_brain(lat_sxmx,npt,num_elecs,min_elec,minnumpts)
 
 %created by N. Sucher at the Kleen Lab in UCSF 2/9/2023
 
@@ -14,9 +14,14 @@ shading flat
 
 npt_pos = [];
 req_pos = nan(27,length(lat_sxmx));
+percent_pos = nan(27,1);
+percent_pos_req = nan(27,1);
 
 cm_percent = cbrewer2('Reds','seq'); %color map 
 cm_npt = cbrewer2('Purples',7,'seq');
+
+num_elecs_min = sum(req_elecs,2);
+
 
 cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA')
 
@@ -31,7 +36,9 @@ for lat = 1:length(lat_sxmx)
         lat_count = lat_count + 1;
         req_idx = find(req_elecs(:,lat_count) > 0);
         for r = 1:length(req_idx)
-            req_pos(req_idx(r),lat) = pos_pv_m(req_idx(r),lat);
+            if pos_pv_m(req_idx(r),lat) < .05
+                req_pos(req_idx(r),lat) = pos_pv_m(req_idx(r),lat);
+            end
         end
     else
         k = 1;
@@ -50,10 +57,16 @@ end
 
 clear label_i
 
+%POSITIVE SIGNIFICANCE
+
 for label_i = 1:length(npt_pos)
-    color_idx = round((npt_pos(label_i) / npt) * length(cm_percent));
-    if color_idx > 0
-        highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'l');
+    percent_pos(label_i) = npt_pos(label_i) / npt;
+    if num_elecs_min(label_i) >= minnumpts
+            percent_pos_req(label_i) = npt_pos(label_i) / npt;
+            color_idx = round((npt_pos(label_i) / npt) * length(cm_percent));
+            if color_idx > 0
+                highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'l');
+            end
     end
 end
 % colormap(cm_percent)
@@ -65,14 +78,18 @@ getbrain4_ns('MNI','',1,0,'l');
 shading flat
 
 for label_i = 1:length(npt_pos)
-    num_elecs_min = sum(req_elecs,2);
-    color_idx = round((num_elecs_min(label_i) / npt) * length(cm_npt));
-    if color_idx > 0
-        highlightbrain('MNI',pos_labels(label_i),[cm_npt(color_idx,:);0 0 0],[0 1],0,0,'l');
-    end
+    if num_elecs_min(label_i) >= minnumpts
+        color_idx = round((num_elecs_min(label_i) / npt) * length(cm_npt));
+        if color_idx > 0
+            highlightbrain('MNI',pos_labels(label_i),[cm_npt(color_idx,:);0 0 0],[0 1],0,0,'l');
+        end
+    end 
 end
 % colormap(cm_npt)
 % cb2 = colorbar;
 % cb2.TickLength = 0;
 % 
+
+cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
+
 k = 1;

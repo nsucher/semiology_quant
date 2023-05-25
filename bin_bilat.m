@@ -39,8 +39,14 @@ end
 
 Mbin=M>0; %any average weight values above zero for each patient in each square
 Mnpt=sum(~isnan(M),3);
+Mnpt_req = sum(~isnan(M),3);
+Mnpt_req(find(Mnpt < 4)) = 0;
 Mptsig=sum(Mbin,3);
-Mpercent = Mptsig'./Mnpt'*100;
+Mptsig_req = sum(Mbin,3);
+Mptsig_req(find(Mptsig < 4)) = 0;
+Mpercent = Mptsig_req'./Mnpt_req'*100;
+Mpercent(Mpercent == 0) = 2;
+Mpercent(isnan(Mpercent)) = 0;
 
 
 
@@ -89,7 +95,7 @@ axis equal; axis off;
 % colormap(ax3,raspberry)
 % figure('color','w')
 cm_sig = cbrewer2('PuRd',7,'seq');
-cm_sig = [1 1 1; cm_sig];
+cm_sig = [.85 .85 .85; cm_sig];
 colormap(ax3,cm_sig)
 % colorbar
 
@@ -98,7 +104,7 @@ colormap(ax3,cm_sig)
 ax4 = subplot(2,2,4);  %percent sigificant patients per square
 pcolor(Mpercent); 
 axis equal; axis off;
-cm_percent = cbrewer2('Reds','seq'); %color map
+cm_percent = [.85 .85 .85; cbrewer2('Reds','seq')]; %color map
 colormap(ax4,cm_percent)
 
 % colormap(ax4,pink_lemonade)
@@ -108,7 +114,7 @@ pcolor(Mnpt');
 axis equal; axis off; 
 % colormap(ax2,mintyfresh)
 cm_npt = cbrewer2('Purples',7,'seq');
-cm_npt = [1 1 1; cm_npt];
+cm_npt = [.85 .85 .85; cm_npt];
 colormap(ax2,cm_npt)
 
 

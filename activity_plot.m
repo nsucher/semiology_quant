@@ -45,7 +45,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        pv_brain(pv_m,pos_m,neg_m,pos_pv_m,neg_pv_m,pos_pv_T,neg_pv_T,...
+        pv_brain(pos_pv_m,neg_pv_m,pos_pv_T,neg_pv_T,...
                  em_m,pt_name,sz_name,ptsz_name,ptsz_i,pt_sxmx_name,laterality);
 
         py_w8s_cell = cell(w8s_array);
@@ -169,7 +169,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
                             end
                           end 
                         end
-
+                
                 hh=ctmr_gauss_plot_edited(srfplot,szxyz(sz_nns,:),sz_w8s(sz_nns),cax,0,cmocean('balance'),params_gsp); 
                 colorbar("southoutside",'fontsize',18)
             end
@@ -189,34 +189,43 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
             subplot(2,1,2)
             hold on;
 
-            for u=1:length(pv_m)   
-                if pv_m(u)<.05
-                     mrkr='r*'; 
-                elseif isnan(pv_m(u))
-                    continue
-                else 
-                    mrkr='ko'; 
-                end
-                for w8 = 1:length(w8_cell{u})       %plot individual electrodes (w8) per neurosemiology (u)
-                    plot(w8_cell{u}{w8},u*ones(length(w8_cell{u}),1),mrkr) % plot LL meandiff of each electrode
-                end
-
-            end
-
             xlim(cax); 
 
-            ylim([0 length(pv_m)]) 
+            ylim([0 length(anat_cell)]) 
 
             yline(0,'k-'); % vertical line at x = 0 separating positive or negative activity
-            yticks(1:length(pv_m))
-            yticklabels(anat_cell)
+            yticks(1:length(anat_cell))
+            
+            anat_label = cell(length(anat_cell),1);
+            
+
+            for u=1:length(pv_m)   
+                if u < length(anat_label)
+                    if pv_m(u)<.05
+                        mrkr='r*'; 
+                        anat_label{u} = anat_cell{u};
+                    elseif isnan(pv_m(u))
+                        mrkr=''; 
+                        anat_label{u} = ' ';
+                    else 
+                        mrkr='ko'; 
+                        anat_label{u} = anat_cell{u};
+                    end
+                    for w8 = 1:length(w8_cell{u})       %plot individual electrodes (w8) per neurosemiology (u)
+                        plot(w8_cell{u}{w8},u*ones(length(w8_cell{u}),1),mrkr) % plot LL meandiff of each electrode
+                    end
+                end
+            end
+
+            yticklabels(anat_label)
+            set(gca,'FontSize',12)
+
 
             for u2=1:length(pv_m)
                 if ~isnan(pv_m(u2))
                     xline(u2,'G:',.25); % horizontal lines marking neuroanatomy
                 end
             end
-
 
             alpha(1)
         end
