@@ -115,18 +115,21 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
             pt_sxmx_name=sxmx_name;
             
+            split_manual_ptsz = split(manual_ptsz{ptsz_i},'_');
+            pt_name = split_manual_ptsz{1};
+            sz_name = split_manual_ptsz{2};
+            ptsz_name = [pt_name '-' sz_name];
+
+            mondrian_plot(pt_name,sz_name,perdur_input)
+
             if pt_sxmx_name(1)=='c'
                 sz_count = sz_count + 1;
                 
                 %%%%%%%%%%%%%
                 % split_ptsz(manual_ptsz,ptsz_i)
-                split_manual_ptsz = split(manual_ptsz{ptsz_i},'_');
-                pt_name = split_manual_ptsz{1};
-                sz_name = split_manual_ptsz{2};
-                ptsz_name = [pt_name '-' sz_name];
                 %%%%%%%%%%%%%
                
-
+        
 
                 cd(opscea_path)
 
