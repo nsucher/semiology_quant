@@ -120,6 +120,8 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
             sz_name = split_manual_ptsz{2};
             ptsz_name = [pt_name '-' sz_name];
 
+            cd(opscea_path)
+
             mondrian_plot(pt_name,sz_name,perdur_input)
 
             if pt_sxmx_name(1)=='c'
@@ -223,7 +225,7 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
             for reg_i = 1:length(reg_all)
 
                 reg_count = reg_count+1;
-                cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'); 
+                cd(opscea_path)
 
                 if mni == 1
                     [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},"MNI",reg_all{reg_i},lat_sxmx{sz_count}, mni_xyz, anatomy, reg_count);
@@ -244,7 +246,7 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 end 
 
 
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
+cd(opscea_path)
 
 close all 
 
