@@ -1,7 +1,6 @@
-function [pv_labels, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(laterality, w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni)
+function [pv_labels, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(laterality, w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni)
 
-cd(avg_path);
-cd ..
+cd(data_path);
 
 all_T = readtable('all_sign_change.xlsx', 'Sheet', pt_sxmx_name,'VariableNamingRule','preserve');
 pos_T = readtable('pos_sign_change.xlsx', 'Sheet', pt_sxmx_name,'VariableNamingRule','preserve');
@@ -30,13 +29,11 @@ pos_pv_m = table2array(pos_pv_T(1:end,ptsz_i+1)); % pvals per ll meandiff of neu
 neg_pv_m = table2array(neg_pv_T(1:end,ptsz_i+1)); % pvals per ll meandiff of neurosem across all electrodes
 
 em_m = table2array(em_T(1:end,2:end));
-
 sign_m = {all_m};
+pv_labels = table2array(all_pv_T(1:end,1)); % convert py variables to matlab 
 
-pv_labels = table2array(all_pv_T(1:end,1));
 
-
-% convert py variables to matlab 
+cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
 
 if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only 
 
@@ -107,7 +104,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
         if ~isnan(mean_sz_LL)
         
         %FIND ELECMATRIX FOR SZ
-            ptpath = [avg_path pt_name];
+            ptpath = [data_path pt_name];
             load([ptpath '/Imaging/elecs/clinical_elecs_all.mat'])
        
             %IMPORT PARAMS
@@ -169,8 +166,14 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
                             end
                           end 
                         end
-                
-                hh=ctmr_gauss_plot_edited(srfplot,szxyz(sz_nns,:),sz_w8s(sz_nns),cax,0,cmocean('balance'),params_gsp); 
+                if length(sz_nns) <= length(szxyz)
+                    hh=ctmr_gauss_plot_edited(srfplot,szxyz(sz_nns,:),sz_w8s(sz_nns),cax,0,cmocean('balance'),params_gsp); 
+                else 
+%                     sz_w8s(1:length(szxyz)) = sz_w8s(sz_nns);
+                    sz_w8s = sz_w8s(1:length(szxyz)); 
+                    sz_nns = sz_nns(1:length(szxyz));
+                    hh=ctmr_gauss_plot_edited(srfplot,szxyz(sz_nns(1:length(szxyz)),:),sz_w8s(sz_nns),cax,0,cmocean('balance'),params_gsp); 
+                end
                 colorbar("southoutside",'fontsize',18)
             end
             
@@ -186,6 +189,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
     %%%%%%%%%%%%%%
     % % anatomy and pval plots
+        %to maintain y-labels with consistency across multiple patients
             subplot(2,1,2)
             hold on;
 
@@ -197,16 +201,16 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
             yticks(1:length(anat_cell))
             
             anat_label = cell(length(anat_cell),1);
-            
 
             for u=1:length(pv_m)   
                 if u < length(anat_label)
                     if pv_m(u)<.05
-                        mrkr='r*'; 
+                        mrkr='ro'; 
                         anat_label{u} = anat_cell{u};
                     elseif isnan(pv_m(u))
                         mrkr=''; 
-                        anat_label{u} = ' ';
+%                         anat_label{u} = ' ';
+                        anat_label{u} = '';
                     else 
                         mrkr='ko'; 
                         anat_label{u} = anat_cell{u};
@@ -229,6 +233,93 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
             alpha(1)
         end
+
+
+        %to only show y-labels with electrode coverage
+% 
+% 
+%             subplot(2,1,2)
+%             hold on;
+% 
+%             xlim(cax); 
+%             
+%             anat_label = cell(length(anat_cell),1);
+% 
+%             marker_vec = {};
+% 
+%             sig_label = [];
+%             sig_count = 0;
+%             for u=1:length(pv_m)   
+%                 if pv_m(u)<.05
+%                     sig_count = sig_count + 1;
+%                     sig_label(sig_count) = anat_label{u};
+% %                     marker_vec{sig_count} = 'r*';
+%                     marker_vec{u} = 'r*';
+% 
+%                 elseif ~isnan(pv_m(u))
+%                     sig_count = sig_count + 1;
+%                     sig_label(sig_count) = anat_cell{u};
+% %                     marker_vec{sig_count} = 'ko';
+%                     marker_vec{u} = 'ko';
+%                 else
+%                     marker_vec{u} = '';
+%                 end
+%             end
+% % 
+%             ylim([0 length(sig_label)]) 
+% 
+%             yline(0,'k-'); % vertical line at x = 0 separating positive or negative activity
+%             yticks(1:length(sig_label))
+%             yticklabels(sig_label)
+% 
+% %             for s = 1:sig_count
+%             for u=1:(length(pv_m)-1)
+%                 if anat_cell{u}
+% %TO DO: FIX LINE 278 SO THAT ONLY RELEVANT Y LABELS SHOW
+%                  
+%                     for w8 = 1:length(w8_cell{u})       %plot individual electrodes (w8) per neurosemiology (u) excluding lingual gyrus
+% %                         plot(w8_cell{u}{w8},u*ones(length(w8_cell{u}),1),marker_vec{s}) % plot LL meandiff of each electrode
+%                         plot(w8_cell{u}{w8},s,marker_vec{u}) % plot LL meandiff of each electrode
+%                     end
+%                 end
+%             end
+% %             end
+           
+
+            %%%%%%%%
+    
+
+%             for u=1:(length(pv_m)-1)   %hard coded to exclude lingual gyrus
+% %                 if u < length(pv_m)   %hard coded to exclude lingual gyrus
+%                     if pv_m(u)<.05
+%                         mrkr='r*'; 
+%                         anat_label{u} = anat_cell{u};
+%                     elseif isnan(pv_m(u))
+%                         mrkr=''; 
+%     %                         anat_label{u} = ' ';
+%                         anat_label{u} = '';
+%                     else 
+%                         mrkr='ko'; 
+%                         anat_label{u} = anat_cell{u};
+%                     end
+%                     for w8 = 1:length(w8_cell{u})       %plot individual electrodes (w8) per neurosemiology (u)
+%                         plot(w8_cell{u}{w8},u*ones(length(w8_cell{u}),1),mrkr) % plot LL meandiff of each electrode
+%                     end
+% %                 end
+%             end
+% 
+%             yticklabels(anat_label)
+%             set(gca,'FontSize',12)
+% 
+% 
+%             for u2=1:length(pv_m)
+%                 if ~isnan(pv_m(u2))
+%                     xline(u2,'G:',.25); % horizontal lines marking neuroanatomy
+%                 end
+%             end
+% 
+%             alpha(1)
+%         end
     else
         w8_cell = {};
         anat_cell = {};

@@ -21,7 +21,7 @@ tic
 
 %   1. specify directory
 opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/';
-avg_path= [opscea_path 'OPSCEADATA/avg_change_folders/'];   %path for parameters sheet
+data_path= [opscea_path 'OPSCEADATA/'];   %path for parameters sheet
 
  
 % EDIT THIS TO REFLECT THE SYMPTOM
@@ -62,7 +62,7 @@ dst_radius = 10; % minimum distance in mm from electrode to each vertex
 
 
 % DELETE PREVIOUS XLSX FILES
-cd([avg_path '..'])
+cd(data_path)
 
 delete pos_pv.xlsx
 delete neg_pv.xlsx
@@ -135,7 +135,7 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
                 cd(opscea_path)
 
-                load([avg_path pt_name '/Imaging/elecs/clinical_elecs_all.mat'],'elecmatrix','anatomy');
+                load([data_path pt_name '/Imaging/elecs/clinical_elecs_all.mat'],'elecmatrix','anatomy');
 
                 em1 = elecmatrix;
                 clear elecmatrix
@@ -158,11 +158,11 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
 
 %                 if mni == 1
-                if exist([avg_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat']) == 2
-                    load([avg_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat'],'elecmatrix');
+                if exist([data_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat']) == 2
+                    load([data_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat'],'elecmatrix');
                     mni_xyz = elecmatrix;
-                elseif exist([avg_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat']) == 2
-                    load([avg_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat'],'elecmatrix');
+                elseif exist([data_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat']) == 2
+                    load([data_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat'],'elecmatrix');
                     mni_xyz = elecmatrix;
                 else
                     [elecmatrix, ~] = make_clinical_elec_all_warped(pt_name);
@@ -178,14 +178,14 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
 
                 cd(opscea_path)
-                [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, avg_path=avg_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
+                [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
             
                 good_mni_list = good_mni.tolist();
                 good_mni_mat = nan(length(good_mni_list)-1,3);
                 len_good_mni = length(good_mni_list)-1;
     
 
-                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
+                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
            
 
 
@@ -202,10 +202,10 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
                 
                 cd(opscea_path);
 
-                [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, avg_path=avg_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
+                [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
                 
                 % heatmap of electrical activity change during symptom onset
-                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, avg_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni); 
+                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni); 
 
 
 
@@ -245,19 +245,27 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
       end 
 end 
 
-
+close all 
 cd(opscea_path)
 
-close all 
-
-minnumpts=1;
+minnumpts=4;
 
 bin_bilat %pixel plot of collapsed bilateral hemisphere 
 
+
+
+minnumpts=4;
+
 pv_all_brain(lat_sxmx,length(manual_ptsz),num_elecs,min_elec,minnumpts) %p value heatmap of combined total patients by neuroanatomical region
 
-max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius,minnumpts) %vertex heatmap on left hemisphere of brain
 max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius,minnumpts) %vertex heatmap on right hemisphere of brain
+
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius,minnumpts) %vertex heatmap on left hemisphere of brain
+
+
+
+
+
 
 
 toc

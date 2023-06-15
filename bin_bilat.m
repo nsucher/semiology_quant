@@ -37,7 +37,7 @@ for p=1:7
     end
 end
 
-Mbin=M>0; %any average weight values above zero for each patient in each square
+Mbin=M>5; %any average weight values above ___ for each patient in each square
 Mnpt=sum(~isnan(M),3);
 Mnpt_req = sum(~isnan(M),3);
 Mnpt_req(find(Mnpt < 4)) = 0;
@@ -47,7 +47,6 @@ Mptsig_req(find(Mptsig < 4)) = 0;
 Mpercent = Mptsig_req'./Mnpt_req'*100;
 Mpercent(Mpercent == 0) = 2;
 Mpercent(isnan(Mpercent)) = 0;
-
 
 
 figure('color','w','position',[230 171 1000 796]);
@@ -98,13 +97,28 @@ cm_sig = cbrewer2('PuRd',7,'seq');
 cm_sig = [.85 .85 .85; cm_sig];
 colormap(ax3,cm_sig)
 % colorbar
-
+pos_pt_data = flipud(Mptsig');
 
 
 ax4 = subplot(2,2,4);  %percent sigificant patients per square
 pcolor(Mpercent); 
 axis equal; axis off;
-cm_percent = [.85 .85 .85; cbrewer2('Reds','seq')]; %color map
+% cm_percent = cbrewer2('Reds',256,'seq'); %color map 
+% cm_percent = cm_percent(1:160,:);
+% 
+cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
+cm_percent = cm_percent(20:120, :);
+% cm_percent(:,1) = 1;
+cm_percent = [.85 .85 .85; cm_percent];
+
+percent_pt_data = flipud(Mpercent);
+
+
+
+
+% cm_percent = [.85 .85 .85; cm_percent];
+
+%color map
 colormap(ax4,cm_percent)
 
 % colormap(ax4,pink_lemonade)
@@ -117,7 +131,7 @@ cm_npt = cbrewer2('Purples',7,'seq');
 cm_npt = [.85 .85 .85; cm_npt];
 colormap(ax2,cm_npt)
 
-
+num_pt_data = flipud(Mnpt');
 
 
 % colormap(spring)

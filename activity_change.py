@@ -187,11 +187,11 @@ def good_ch(badch, d, anat, em,a_i,mni_xyz):
     good_mni = mni_xyz[good_logical,:]
 
     return good_logical, good_d, good_anat, good_em, good_mni
-def input_names(ptsz_input,sxmx_input,avg_path):
+def input_names(ptsz_input,sxmx_input,data_path):
     pt_name, sz_name = ptsz_input.split('-')
     ptsz_name = pt_name + '_' + sz_name
     sx_name, mx_name = sxmx_input.split(' ')
-    pt_path = avg_path + pt_name + '/'
+    pt_path = data_path + pt_name + '/'
     sz_path = pt_path + ptsz_name
 
     return pt_name, sz_name, sx_name, mx_name, ptsz_name, pt_path, sz_path
@@ -241,7 +241,7 @@ def create_workbooks(name_xlsx):
         write_cell(1, 1, sxmx_input, sheet)
         write_cell(1, ptsz_i + 1, ptsz_name, sheet)
 
-        workbook_created.save(opscea_data_path + name_xlsx)
+        workbook_created.save(data_path + name_xlsx)
         workbook_created.close()
 def create_em_workbook(name_xlsx):
     if name_xlsx not in os.listdir():
@@ -250,7 +250,7 @@ def create_em_workbook(name_xlsx):
 
         write_cell(1, ptsz_i + 1, ptsz_name, sheet)
 
-        workbook_created.save(opscea_data_path + name_xlsx)
+        workbook_created.save(data_path + name_xlsx)
         workbook_created.close()
 def write_new_sheet(sxmx_input, ptsz_i, ptsz_name, workbook_name):
     if sxmx_input not in workbook_name.sheetnames:
@@ -260,7 +260,7 @@ def write_new_sheet(sxmx_input, ptsz_i, ptsz_name, workbook_name):
         write_cell(1, 1, sxmx_input, sheet_sxmx)
         write_cell(1, ptsz_i + 1, ptsz_name, sheet_sxmx)
 
-        workbook_name.save(opscea_data_path + name_xlsx)
+        workbook_name.save(data_path + name_xlsx)
         workbook_name.close()
 def find_laterality(em_sign_row):
     isR = np.nansum(em_sign_row) > 0
@@ -277,13 +277,11 @@ def find_laterality(em_sign_row):
 print(ptsz_input,' ',sxmx_input)
 
 #   INITIALIZE NAMES
-pt_name, sz_name, sx_name, mx_name, ptsz_name, pt_path, sz_path = input_names(ptsz_input, sxmx_input, avg_path)
+pt_name, sz_name, sx_name, mx_name, ptsz_name, pt_path, sz_path = input_names(ptsz_input, sxmx_input, data_path)
 list_str_xlsx = ['pos_pv.xlsx', 'neg_pv.xlsx', 'all_pv.xlsx', 'all_sign_change.xlsx', 'pos_sign_change.xlsx', 'neg_sign_change.xlsx', 'elec_w8s.xlsx', 'cut_sign_change.xlsx']
 
-
-#   OPSCEA DATA PATH
-os.chdir(avg_path + '/..')
-opscea_data_path = os.getcwd() + '/'
+#   SET PATH TO SAVE FILES
+os.chdir(data_path)
 
 #   CREATE NEW XLSX WORKBOOKS
 for str_xlsx in range(0, len(list_str_xlsx)):
@@ -332,11 +330,6 @@ badch = badch_mat(badch_name)
 sz_count = round(sz_count)
 
 cut_d = d[0:int(e_row)][:]
-
-# OPSCEA DATA PATH
-os.chdir(avg_path + '..')
-opscea_data_path = os.getcwd() + '/'
-
 
 # sheet_em = workbook_loaded_em.active
 
@@ -485,15 +478,15 @@ if np.float64(mx_name) in sx_vec:
 else:
     pass
 
-workbook_loaded_pos_pv.save(opscea_data_path + 'pos_pv.xlsx')
-workbook_loaded_neg_pv.save(opscea_data_path + 'neg_pv.xlsx')
-workbook_loaded_all_pv.save(opscea_data_path + 'all_pv.xlsx')
-workbook_loaded_all.save(opscea_data_path + 'all_sign_change.xlsx')
-workbook_loaded_pos.save(opscea_data_path + 'pos_sign_change.xlsx')
-workbook_loaded_neg.save(opscea_data_path + 'neg_sign_change.xlsx')
-workbook_loaded_em.save(opscea_data_path + 'elec_matrix.xlsx')
-workbook_loaded_w8s.save(opscea_data_path + 'elec_w8s.xlsx')
-# workbook_loaded_cut.save(opscea_data_path + 'cut_sign_change.xlsx')
+workbook_loaded_pos_pv.save(data_path + 'pos_pv.xlsx')
+workbook_loaded_neg_pv.save(data_path + 'neg_pv.xlsx')
+workbook_loaded_all_pv.save(data_path + 'all_pv.xlsx')
+workbook_loaded_all.save(data_path + 'all_sign_change.xlsx')
+workbook_loaded_pos.save(data_path + 'pos_sign_change.xlsx')
+workbook_loaded_neg.save(data_path + 'neg_sign_change.xlsx')
+workbook_loaded_em.save(data_path + 'elec_matrix.xlsx')
+workbook_loaded_w8s.save(data_path + 'elec_w8s.xlsx')
+# workbook_loaded_cut.save(data_path + 'cut_sign_change.xlsx')
 
 
 workbook_loaded_pos_pv.close()

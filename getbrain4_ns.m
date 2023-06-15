@@ -34,11 +34,11 @@ if strcmpi(pt_name,'MNI')
     pt_name='cvs_avg35_inMNI152'; 
 end 
 
-ptdir=[mainpath 'OPSCEADATA/avg_change_folders/' pt_name '/Imaging/Meshes/' pt_name];
+ptdir=[mainpath 'OPSCEADATA/' pt_name '/Imaging/Meshes/' pt_name];
 % if ~[exist([ptdir '_lh_pial.mat'])==2]; ptdir=[mainpath(1:end-7) 'AN/DATA/' pt '/Imaging/Meshes/' pt]; end
 % if ~[exist([ptdir '_lh_pial.mat'])==2]; ptdir=['/Users/jkleen/Desktop/ChangLab/Data/' pt '/Imaging/Meshes/' pt]; end
 if ~[exist([ptdir '_lh_pial.mat'])==2]
-    ptdir=['/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA/avg_change_folders/' pt_name '/Imaging/Meshes/' pt_name]; 
+    ptdir=['/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA/' pt_name '/Imaging/Meshes/' pt_name]; 
 end
 
 % ptdir=[mainpath 'OPSCEADATA/' pt '/Imaging/Meshes/' pt];

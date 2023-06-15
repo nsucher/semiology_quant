@@ -1,6 +1,4 @@
 function [mesh_handle,mesh]=highlightbrain(pt,ROI,colr,edgeface,plotbrain,newfig,hemi)
-
-
 % pt is string patient name, such as 'EC129', or just 'MNI' for standard brain
 % ROI is ROIions of interest as cells of strings, 
 %     for example {'superiortemporal','parsopercularis','entorhinal'}

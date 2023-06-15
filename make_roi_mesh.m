@@ -32,7 +32,7 @@ recondir = sprintf('%s/Imaging/Meshes', subjdir); % for cvs_avg35_inMNI152
 
 labeldir = sprintf('%s/Imaging/label/gyri', subjdir);
 % outfile = sprintf('%s/%s_%s_%s_pial.mat', recondir, subj, hem, roi_name);
-outfile = sprintf('%s/%s_%s_pial.mat', recondir, subj, hem, roi_name);
+outfile = sprintf('%s/%s_%s%s_%s_pial.mat', recondir, subj, hem(1), hem(2), roi_name);
 
 % Load the cortical surface mesh
 % load(sprintf('%s/%s_%s_pial.mat', recondir, subj, hem));
@@ -47,7 +47,7 @@ mesh.tri = [];
 mesh.vert = [];
 vertnums = [];
 for lab = 1:length(label_list)
-    this_label=sprintf('%s/%s.%s.label', labeldir, hem, label_list{lab});
+    this_label=sprintf('%s/%s%s.%s.label', labeldir, hem(1), hem(2), label_list{lab});
     if exist(this_label,'file')
       fid=fopen(this_label);
       C = textscan(fid, '%f %f %f %f %f','Headerlines',2);
