@@ -1,10 +1,12 @@
-function mondrian_plot(pt,sz,perdur)
+function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,ts_sx,to_plot)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
 % perdur is an integer indicating seconds before and after the analysis of
 % the first symptom onset to analyze
+% to_plot is whether or not to run the function
 
+if to_plot
     % 1. Load data and find number of columns
     opsceapath= '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; 
     datapath=[opsceapath 'OPSCEADATA/'];   %path for OPSCEA ICEEG and imaging data
@@ -36,15 +38,15 @@ function mondrian_plot(pt,sz,perdur)
     
         % Anatomy
         switch anatomy 
-            case 'lu'; full_anat = 'Left Upper'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'ru'; full_anat = 'Right Upper'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'lh'; full_anat = 'Left Head'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'rh'; full_anat = 'Right Head'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'le'; full_anat = 'Left Eye '; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 're'; full_anat = 'Right Eye'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'lm'; full_anat = 'Left Mouth'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'rm'; full_anat = 'Right Mouth'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'ht'; full_anat = 'Head Turn'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'lu'; full_anat = 'L Arm'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'ru'; full_anat = 'R Arm'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'lh'; full_anat = 'L Head'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'rh'; full_anat = 'R Head'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'le'; full_anat = 'L Eye '; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 're'; full_anat = 'R Eye'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'lm'; full_anat = 'L Mouth'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+            case 'rm'; full_anat = 'R Mouth'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+%             case 'ht'; full_anat = 'Head Turn'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
 %             case 'tt'; full_anat = 'Torso Turn';
 %             case 'vx'; full_anat = 'Voice';
 %             case 'gm'; full_anat = 'Gyratory Movement';
@@ -56,8 +58,8 @@ function mondrian_plot(pt,sz,perdur)
 %             case 'ln'; full_anat = 'Left Hand';
 %                 
 %             case 'rn'; full_anat = 'Right Hand';
-%             case 'll'; full_anat = 'Left Lower';
-%             case 'rl'; full_anat = 'Right Lower';
+            case 'll'; full_anat = 'L Leg';
+            case 'rl'; full_anat = 'R Leg';
 %             case 'lf'; full_anat = 'Left Foot';
 %             case 'rf'; full_anat = 'Right Foot';
 %             case 'br'; full_anat = 'Behavioral Arrest';
@@ -99,7 +101,7 @@ function mondrian_plot(pt,sz,perdur)
     [rows,cols] = size(nums_t_mat);
 
     t_sec = rows * .2; %convert to sec 
-% 
+ 
     col_num = [];
 
     first_auto = [];
@@ -112,7 +114,6 @@ function mondrian_plot(pt,sz,perdur)
     last_clonic = [];
 
     cd(opsceapath)
-
 
     for n = 1:cols
         if ismember(1,nums_t_mat(:,n))
@@ -140,8 +141,6 @@ function mondrian_plot(pt,sz,perdur)
 
     end
 
-
-
     bin_any = any(clean_mat);
 
     % -----------------------------------------------------------------
@@ -155,9 +154,10 @@ function mondrian_plot(pt,sz,perdur)
     figure('Color','w','Name',['Semiology: ' pt '_' sz])
     imagesc(semts,1:size(m,1),m)
 
-%     xlim([(sem_start-str2num(perdur)) (sem_end+str2num(perdur))])
-    xlim([(sem_start-(str2num(perdur)*3)) (sem_end+str2num(perdur))])
+    plot_start = sem_start-(perdur*3);
+    plot_end = sem_end+perdur;
 
+    xlim([plot_start plot_end])
 
     colorbar('location','southoutside','Ticks',[.5:1:4.5],'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
     cmap = [0.8,0.8,0.8;1,1,0;0,.4,1;.9,0,0;1,1,1]; % 0=Grey, 1=yellow, 2=blue, 3=red, 4=white
@@ -178,18 +178,15 @@ function mondrian_plot(pt,sz,perdur)
 
     set(gca,'YAxisLocation','right')
 
-%     yyaxis right
-
-% 
-
-    
-
-%     xline()
     xline([1.5:1:max(get(gca,'ytick'))],'k-',2.5)
     iter = 7.5; %for wide plot
-%  
+
     yline([min(xlim):iter:max(xlim)],'k-',.01)
 
 
-    max(get(gca,'YTick'))
+    max(get(gca,'YTick'));
+
+    yline(ts_sx,'m-',2) % vertical red line that follows time
+
+end
 

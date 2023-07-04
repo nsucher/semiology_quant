@@ -1,11 +1,15 @@
+function [ts_sx,sx_sec] = neurosem_data(uber_pt)
+
+
+% Function to generate figures analyzing change of neural activity during onset of seizure symptom
+% output: ts_sx is the timestamp of the first onset of the seizure symptom
+
+
 % Natalia Sucher in the Kleen Lab, UCSF
 % Created 1/31/2023
-% Edited 5/25/2023
+% Edited 6/21/2023
 
-
-%
-% Bug: cuts off neuroanatomy for lingual gyrus in activity_change.py or
-% activity_plot.m
+% Bug: cuts off neuroanatomy for lingual gyrus in activity_change.py or activity_plot.m
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,9 +61,7 @@ reg_all = {'stg','mtg','itg','fus','tp','ph','hp','am','ent','pt','po','por','cm
 % CHOOSE RADIUS HERE
 dst_radius = 10; % minimum distance in mm from electrode to each vertex
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % DELETE PREVIOUS XLSX FILES
 cd(data_path)
@@ -99,6 +101,7 @@ elecs_msize = zeros(2,length(manual_ptsz));
 e_max_vec = ones(length(reg_all),length(manual_ptsz));
 
 num_elecs = [];
+first_sx_vec = zeros(1,length(manual_ptsz)); %initialize empty vector to collect timestamps for onset of symtpoms for each patient
 
 for sx_i = 1:length(sx_input) % for loop throughout symptoms
     sx_name = sx_input{sx_i};
@@ -122,94 +125,91 @@ for sx_i = 1:length(sx_input) % for loop throughout symptoms
 
             cd(opscea_path)
 
-            mondrian_plot(pt_name,sz_name,perdur_input)
+%             mondrian_plot(pt_name,sz_name,perdur_input)
 
-            if pt_sxmx_name(1)=='c'
-                sz_count = sz_count + 1;
-                
-                %%%%%%%%%%%%%
-                % split_ptsz(manual_ptsz,ptsz_i)
-                %%%%%%%%%%%%%
-               
+%             if pt_sxmx_name(1)=='c'
+            sz_count = sz_count + 1;
+                           
+  
+            cd(opscea_path)
+
+            load([data_path pt_name '/Imaging/elecs/clinical_elecs_all.mat'],'elecmatrix','anatomy');
+
+            em1 = elecmatrix;
+            clear elecmatrix
+            %%%%%%%%%%%%%
+            [e_row,~] = size(em1);
+
+            isR=nansum(em1(:,1))>0; isL=isR~=1;
+
+            if isR
+                pt_sxmx_name(1) = 'l';
+                lat_sxmx{sz_count} = pt_sxmx_name; % add to cell of symptoms with laterality
+            elseif isL
+                pt_sxmx_name(1) = 'r';
+                lat_sxmx{sz_count} = pt_sxmx_name; % add to cell of symptoms with laterality
+
+            end
+            %%%%%%%%%%%%
+
+
+            if exist([data_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat']) == 2
+                load([data_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat'],'elecmatrix');
+                mni_xyz = elecmatrix;
+            elseif exist([data_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat']) == 2
+                load([data_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat'],'elecmatrix');
+                mni_xyz = elecmatrix;
+            else
+                [elecmatrix, ~] = make_clinical_elec_all_warped(pt_name);
+                mni_xyz = elecmatrix;
+                %todo: delete nans from elecmatrix to be same size as szxyz -- follow activity_change.py (retranslate it into matlab)
+            end
+            save('mni_elecmatrix.mat','mni_xyz')
+            clear elecmatrix;
+
+            cd(opscea_path)
+
+            [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         
+            %collect timestamps of onset of symptoms
+%             if first_mx ~= py.NoneType
+%                 first_sx_vec(1,ptsz_i) = first_mx; %collect timestamps of first onset of symptoms for each patient
+%             end
+                
+            if matches(pt_name,uber_pt)
+                first_sx_vec(1,ptsz_i) = first_mx;
+                ts_sx = int64(first_mx);
+            end
 
-                cd(opscea_path)
-
-                load([data_path pt_name '/Imaging/elecs/clinical_elecs_all.mat'],'elecmatrix','anatomy');
-
-                em1 = elecmatrix;
-                clear elecmatrix
-                %%%%%%%%%%%%%
-                [e_row,~] = size(em1);
-
-                isR=nansum(em1(:,1))>0; isL=isR~=1;
-
-                if isR
-                    pt_sxmx_name(1) = 'l';
-                    lat_sxmx{sz_count} = pt_sxmx_name; % add to cell of symptoms with laterality
-%                     lat_brain_vec{sz_count} = 'r';
-                elseif isL
-                    pt_sxmx_name(1) = 'r';
-                    lat_sxmx{sz_count} = pt_sxmx_name; % add to cell of symptoms with laterality
-
-%                     lat_brain_vec{sz_count} = 'l';
-                end
-                %%%%%%%%%%%%
+            %
+          
+            good_mni_list = good_mni.tolist();
+            good_mni_mat = nan(length(good_mni_list)-1,3);
+            len_good_mni = length(good_mni_list)-1;
 
 
-%                 if mni == 1
-                if exist([data_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat']) == 2
-                    load([data_path pt_name '/Imaging/elecs/clinical_TDT_elecs_all_warped.mat'],'elecmatrix');
-                    mni_xyz = elecmatrix;
-                elseif exist([data_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat']) == 2
-                    load([data_path pt_name '/Imaging/elecs/clinical_elecs_all_warped.mat'],'elecmatrix');
-                    mni_xyz = elecmatrix;
-                else
-                    [elecmatrix, ~] = make_clinical_elec_all_warped(pt_name);
-                    mni_xyz = elecmatrix;
-                    %todo: delete nans from elecmatrix to be same size as szxyz -- follow activity_change.py (retranslate it into matlab)
-                end
-                save('mni_elecmatrix.mat','mni_xyz')
-                clear elecmatrix;
-% 
-%                 else
-%                     mni_xyz = em1;
-%                 end
-
-
-                cd(opscea_path)
-                [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
-            
-                good_mni_list = good_mni.tolist();
-                good_mni_mat = nan(length(good_mni_list)-1,3);
-                len_good_mni = length(good_mni_list)-1;
-    
-
-                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
+            [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
            
 
 
             % TO DO: DELETE THIS IF/ELSE CONDITIONAL, SMUSH INTO ONE
-            else
-                sz_count = sz_count + 1;
-
-                lat_sxmx{sz_count} = pt_sxmx_name;
-
-                split_manual_ptsz = split(manual_ptsz{ptsz_i},'_');
-                pt_name = split_manual_ptsz{1};
-                sz_name = split_manual_ptsz{2};
-                ptsz_name = [pt_name '-' sz_name];
-                
-                cd(opscea_path);
-
-                [laterality, w8s_array, anat_array, good_mni] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
-                
-                % heatmap of electrical activity change during symptom onset
-                [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni); 
-
-
-
-            end
+%             else
+%                 sz_count = sz_count + 1;
+% 
+%                 lat_sxmx{sz_count} = pt_sxmx_name;
+% 
+%                 split_manual_ptsz = split(manual_ptsz{ptsz_i},'_');
+%                 pt_name = split_manual_ptsz{1};
+%                 sz_name = split_manual_ptsz{2};
+%                 ptsz_name = [pt_name '-' sz_name];
+%                 
+%                 cd(opscea_path);
+% 
+%                 [laterality, w8s_array, anat_array, good_mni,first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
+%                 
+%                 % heatmap of electrical activity change during symptom onset
+%                 [~, w8_cell, anat_cell, sz_w8s, sz_nns, szxyz, loaf] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni); 
+%             end
             
             for w_anat = 2:length(w8s_array)
                 num_elecs(w_anat-1,ptsz_i) = length(w8_cell{1,w_anat-1});
@@ -252,20 +252,13 @@ minnumpts=4;
 
 bin_bilat %pixel plot of collapsed bilateral hemisphere 
 
-
-
 minnumpts=4;
 
 pv_all_brain(lat_sxmx,length(manual_ptsz),num_elecs,min_elec,minnumpts) %p value heatmap of combined total patients by neuroanatomical region
 
-max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius,minnumpts) %vertex heatmap on right hemisphere of brain
-
-max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius,minnumpts) %vertex heatmap on left hemisphere of brain
-
-
-
-
-
-
+sx_sec = first_sx_vec/5;
+% max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius,minnumpts) %vertex heatmap on right hemisphere of brain
+% 
+% max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius,minnumpts) %vertex heatmap on left hemisphere of brain
 
 toc
