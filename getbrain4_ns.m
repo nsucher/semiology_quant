@@ -4,6 +4,7 @@ function [cortexout,hem]=getbrain4_ns(pt_name,sz_name,plotbrain,newfig,hem)
 % newfig is 1 to create a new figure for this plot
 % hem is l, r, or b (left, right, bilateral)
 % updated by Natalia Sucher 1/17/2023
+% edited 8/8/23
 
 mainpath='/Users/nataliasucher/Desktop/UCSF/Coding/OPSCEA/';      %path for OPSCEA folders
 
@@ -35,16 +36,9 @@ if strcmpi(pt_name,'MNI')
 end 
 
 ptdir=[mainpath 'OPSCEADATA/' pt_name '/Imaging/Meshes/' pt_name];
-% if ~[exist([ptdir '_lh_pial.mat'])==2]; ptdir=[mainpath(1:end-7) 'AN/DATA/' pt '/Imaging/Meshes/' pt]; end
-% if ~[exist([ptdir '_lh_pial.mat'])==2]; ptdir=['/Users/jkleen/Desktop/ChangLab/Data/' pt '/Imaging/Meshes/' pt]; end
-if ~[exist([ptdir '_lh_pial.mat'])==2]
+if ~exist([ptdir '_lh_pial.mat'],"file")
     ptdir=['/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA/' pt_name '/Imaging/Meshes/' pt_name]; 
 end
-
-% ptdir=[mainpath 'OPSCEADATA/' pt '/Imaging/Meshes/' pt];
-% if ~[exist([ptdir '_lh_pial.mat'])==2]; ptdir=[mainpath(1:end-7) 'AN/DATA/' pt '/Imaging/Meshes/' pt]; end
-
-
 
 cortexout={};
 if nargin>=2
@@ -58,14 +52,14 @@ if nargin>=2
         end
         
         if bilat||strcmp(hem(1),'l') %plot left brain
-            load([ptdir '_lh_pial.mat']); 
+            load([ptdir '_lh_pial.mat'],'cortex'); 
             ctmr_gauss_plot_addl(cortex,[],[],'lh'); 
             cortexout=[cortexout cortex];
 %             litebrain('l',.25)
         end
             
         if bilat||strcmp(hem(1),'r') % plot right brain
-            load([ptdir '_rh_pial.mat']); 
+            load([ptdir '_rh_pial.mat'],'cortex'); 
             ctmr_gauss_plot_addl(cortex,[],[],'rh'); 
             cortexout=[cortexout cortex];
 %             litebrain('r',.25)
@@ -76,13 +70,10 @@ if nargin>=2
         end
     elseif nargout>0
         if bilat||strcmp(hem(1),'l') %get left brain
-            load([ptdir '_lh_pial.mat']); cortexout=[cortexout cortex];
+            load([ptdir '_lh_pial.mat'],'cortex'); cortexout=[cortexout cortex];
         end
         if bilat||strcmp(hem(1),'r') % get right brain
-            load([ptdir '_rh_pial.mat']); cortexout=[cortexout cortex];
+            load([ptdir '_rh_pial.mat'],'cortex'); cortexout=[cortexout cortex];
         end
     end
 end
-
-l = 0;
-

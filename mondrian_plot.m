@@ -1,4 +1,4 @@
-function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,ts_sx,to_plot)
+function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,ts_sx,to_plot,opscea_path,data_path)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
@@ -8,11 +8,9 @@ function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,ts_sx,to_p
 
 if to_plot
     % 1. Load data and find number of columns
-    opsceapath= '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; 
-    datapath=[opsceapath 'OPSCEADATA/'];   %path for OPSCEA ICEEG and imaging data
-    if ~exist(datapath,'dir'); error('Directory for your data needs to be corrected'); end
+    if ~exist(data_path,'dir'); error('Directory for your data needs to be corrected'); end
 
-    cd([datapath pt '/' pt '_' sz]);
+    cd([data_path pt '/' pt '_' sz]);
 
     sem_matrix_filename = [pt '_' sz '_mat.csv'];
     sem_matrix = readtable(sem_matrix_filename); %JK
@@ -113,7 +111,7 @@ if to_plot
     first_clonic = [];
     last_clonic = [];
 
-    cd(opsceapath)
+    cd(opscea_path)
 
     for n = 1:cols
         if ismember(1,nums_t_mat(:,n))
@@ -189,4 +187,3 @@ if to_plot
     yline(ts_sx,'m-',2) % vertical red line that follows time
 
 end
-

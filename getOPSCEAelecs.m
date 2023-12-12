@@ -1,15 +1,12 @@
-function [elecmatrix,eleclabels,anatomy]=getOPSCEAelecs(pt,clin1TDT2MNI3)
+function [elecmatrix,eleclabels,anatomy]=getOPSCEAelecs(pt,clin1TDT2MNI3,data_path)
 
-mainpath='/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/';      %path for OPSCEA folders
-%     if exist(mainpath,'dir')==0; mainpath='/Volumes/OPSCEA/'; end
-%     if ~exist(mainpath,'dir')==7; msgbox('KLEEN_DRIVE not found, you may need to reconnect?'); return; end
+%Edited by Natalia Sucher 8/13/23
 
-ptdir=strcat([mainpath 'OPSCEADATA/'],pt); 
+ptdir=strcat(data_path,pt); 
 filepath='/Imaging/elecs/';
 if clin1TDT2MNI3==1; typ='clinical'; elseif clin1TDT2MNI3==2; typ='TDT'; elseif clin1TDT2MNI3==3; typ='TDT'; end;
 clinfilename_alternate='clinical_TDT'; 
 ext='_elecs_all.mat'; 
-
 
 if clin1TDT2MNI3<3; fn=[ptdir filepath typ ext]; else; fn=[ptdir filepath typ '_elecs_all_warped.mat']; end
 fn_alt=[ptdir filepath clinfilename_alternate ext];

@@ -106,6 +106,10 @@ def sem_w8s(LL,at_onset,before_onset,after_onset):
     # AVERAGE ACTIVITY AFTER SYMPTOM - AVERAGE ACTIVITY BEFORE SYMPTOM
     for row in range(0,row_num-1): #for each channel in LL
          LL_meandiff[row] = np.mean(LL[row,int(at_onset):int(after_onset)]) - np.mean(LL[row,int(before_onset):int(at_onset)])
+
+    # print(np.shape(LL_meandiff))
+    # print(LL_meandiff)
+
     return LL_meandiff
 def ll_transform(llw,fs,d,bl_start,bl_stop):
     if bl_start == 0:
@@ -117,6 +121,7 @@ def ll_transform(llw,fs,d,bl_start,bl_stop):
     L = int(np.round(llw * fs) - 1)    # number of samples to calculate line length
 
     col_len = np.shape(d)[1]-L
+
 
     LL = np.empty([np.shape(d)[0],col_len])
     LL[:] = np.NaN
@@ -130,10 +135,15 @@ def ll_transform(llw,fs,d,bl_start,bl_stop):
         LL[row_1,:] = (LL[row_1,:] - LL_nanmean)/LL_nanstd
 
     return LL
+
+
 def filt(d,fs):
     d_t = d.transpose()
     butter_array = np.array([1,(round(fs[0]/2)-1)])
+    # print(butter_array/fs[0]/2)
     b,a = butter(2,butter_array/(fs[0]/2),btype='bandpass',output='ba')
+    # print(a)
+    # print(b)
     filt_d = filtfilt(b,a,d_t,axis=0,padtype='odd',padlen=3*(max(len(b),len(a))-1)).transpose()
 
     return filt_d
@@ -208,8 +218,11 @@ def write_cell(cell_row, cell_col, cell_input, sheet_name):
 def sx_onset(fs, perdur_input, first_mx):
     time_ms = (first_mx / 5)
     at_onset = np.round(time_ms * fs)
+    # print(at_onset)
     before_onset = np.round((time_ms - float(perdur_input)) * fs)
+    # print(before_onset)
     after_onset = np.round((time_ms + float(perdur_input)) * fs)
+    # print(after_onset)
 
     return at_onset, before_onset, after_onset, time_ms
 

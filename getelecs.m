@@ -1,10 +1,8 @@
-function [elecmatrix,eleclabels,anatomy]=getelecs(pt,clin1TDT2MNI3)
+function [elecmatrix,eleclabels,anatomy]=getelecs(pt,clin1TDT2MNI3,opscea_path,data_path)
 
-mainpath='/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/';      %path for OPSCEA folders
-%     if exist(mainpath,'dir')==0; mainpath='/Volumes/AN/'; end
-%     if ~exist(mainpath,'dir')==7; msgbox('KLEEN_DRIVE not found, you may need to reconnect?'); return; end
+%Edited by Natalia Sucher 8/13/23
 
-ptdir=strcat([mainpath 'OPSCEADATA/'],pt); 
+ptdir=strcat(data_path,pt); 
 filepath='/Imaging/elecs/';
 if clin1TDT2MNI3==1 
     typ='clinical'; 
@@ -16,7 +14,7 @@ end
 clinfilename_alternate='clinical_TDT'; 
 ext='_elecs_all.mat'; 
 
-cd(mainpath)
+cd(opscea_path)
 
 if clin1TDT2MNI3<3
     fn=[ptdir filepath typ ext]; 
@@ -46,7 +44,7 @@ elseif exist(fn_alt)==2;
 % elseif exist(elecmatrix) == 2
 %     disp(elecmatrix)
 else
-    [elecmatrix,eleclabels,anatomy]=getOPSCEAelecs(pt,clin1TDT2MNI3); %check OPSCEA pts
+    [elecmatrix,eleclabels,anatomy]=getOPSCEAelecs(pt,clin1TDT2MNI3,data_path); %check OPSCEA pts
     if ~exist('elecmatrix','var'); 
         elecmatrix=[]; eleclabels=[]; anatomy=[]; disp('No result, check path and filename')
     end

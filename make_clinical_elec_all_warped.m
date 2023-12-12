@@ -1,9 +1,11 @@
-function [emCM,idx_vec]=make_clinical_elec_all_warped(pt)
+function [emCM,idx_vec]=make_clinical_elec_all_warped(pt,opscea_path,data_path)
 
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
-[emC]=getelecs(pt,1);
-[emT]=getelecs(pt,2);
-[emTM]=getelecs(pt,3);
+%Edited by Natalia Sucher 8/13/23
+
+cd(opscea_path)
+[emC]=getelecs(pt,1,opscea_path,data_path);
+[emT]=getelecs(pt,2,opscea_path,data_path);
+[emTM]=getelecs(pt,3,opscea_path,data_path);
 
 emCM=nan(size(emC));
 
@@ -28,6 +30,3 @@ for i=1:nchC
         continue
     end
 end
-
-d = 1;
-

@@ -1,55 +1,49 @@
-function pv_all_brain(lat_sxmx,npt,num_elecs,min_elec,minnumpts)
+function pv_all_brain(sx_input,lat_sxmx,npt,num_elecs,min_elec,minnumpts,opscea_path,data_path)
 
-%created by N. Sucher at the Kleen Lab in UCSF 2/9/2023
+% created by Natalia Sucher 2/9/2023
+% edited by Natalia Sucher 8/13/2023 
 
-
-req_elecs = num_elecs > min_elec; %matrix anatomies by patient with sufficient number of electrodes
+req_elecs = num_elecs >= min_elec; %matrix anatomies by patient with sufficient number of electrodes
 [~,req_col] = size(req_elecs);
 
 % establish neuroanatomy labels
 
-figure('Name',['positive significance'],'Color','w'); % different figure for each symptom/mode combination
+figure('Name',[sx_input{1,1} '- positive significance'],'Color','w'); % different figure for each symptom/mode combination
 getbrain4_ns('MNI','',1,0,'r');
 shading flat
 
-npt_pos = [];
+npt_pos = nan(26,1);
 req_pos = nan(27,length(lat_sxmx));
-percent_pos = nan(27,1);
+% percent_pos = nan(27,1);
 percent_pos_req = nan(27,1);
 
 cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
 cm_percent = cm_percent(20:120,:);
-% cm_percent = cm_percent(1:round((15*length(cm_percent))/16), :);
 cm_npt = cbrewer2('Purples',7,'seq');
 
-num_elecs_min = sum(req_elecs,2);
+num_elecs_min = sum(req_elecs,2); % number of patients that have at least 5 electrodes in neuroanatomy
+pos_num_elecs_min = num_elecs_min;
+pos_num_elecs_min(pos_num_elecs_min < minnumpts) = NaN;
 
+cd(data_path)
 
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA')
-
-%assuming only one symptom is input
-lat_count = 0;
 for lat = 1:length(lat_sxmx)
-    pos_pv_T = readtable('pos_pv.xlsx', 'Sheet', lat_sxmx{lat},'VariableNamingRule','preserve');
-    pos_labels(:,1) = table2array(pos_pv_T(1:end,1));
-%     [p_row,~] = size(pos_pv_T);
-    pos_pv_m = table2array(pos_pv_T(1:end,2:end));%(1:end,1:end)); % pvals per ll meandiff of neurosem across all electrodes
+    if lat == 1
+        pos_pv_T = readtable('pos_pv.xlsx', 'Sheet', lat_sxmx{lat},'VariableNamingRule','preserve');
+        pos_labels(:,1) = table2array(pos_pv_T(1:end,1));
+        pos_pv_m = table2array(pos_pv_T(1:end,2:end));%(1:end,1:end)); % pvals per ll meandiff of neurosem across all electrodes
+    end
     if req_col >= lat
-        lat_count = lat_count + 1;
-        req_idx = find(req_elecs(:,lat_count) > 0);
+        req_idx = find(req_elecs(:,lat) > 0);
         for r = 1:length(req_idx)
             if pos_pv_m(req_idx(r),lat) < .05
                 req_pos(req_idx(r),lat) = pos_pv_m(req_idx(r),lat);
             end
         end
-    else
-        k = 1;
     end
 end
 
-clear lat_count
 
-% pos_pv_m = pos_pv_m(req_elecs);
 
 for label_i = 1:length(pos_labels)
     if sum(any(req_pos(label_i,:))) > 0 
@@ -60,16 +54,16 @@ end
 npt_pos = npt_pos';
 clear label_i
 
-%POSITIVE SIGNIFICANCE
+%PLOT RED BRAIN OF POSITIVE SIGNIFICANCE
 
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
+cd(opscea_path)
 
 for label_i = 1:length(npt_pos)
-    percent_pos(label_i) = npt_pos(label_i) / npt_pos(label_i);
-    if num_elecs_min(label_i) >= minnumpts
+%     percent_pos(label_i) = npt_pos(label_i) / npt_pos(label_i);
+    if pos_num_elecs_min(label_i) >= minnumpts
 %             percent_pos_req(label_i) = npt_pos(label_i) / npt;
-            percent_pos_req(label_i) = npt_pos(label_i) / num_elecs_min(label_i);
-            color_idx = round((npt_pos(label_i) / num_elecs_min(label_i)) * length(cm_percent));
+            percent_pos_req(label_i) = npt_pos(label_i) / pos_num_elecs_min(label_i);
+            color_idx = round((npt_pos(label_i) / pos_num_elecs_min(label_i)) * length(cm_percent));
             if color_idx > 0
                 highlightbrain('MNI',pos_labels(label_i),[1 1 1],[0 1],0,0,'r');
                 highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'r');
@@ -83,7 +77,9 @@ end
 % cb1 = colorbar;
 % cb1.TickLength = 0;
 
-figure('Name',['number of patients'],'Color','w'); % different figure for each symptom/mode combination
+
+%PLOT PURPLE BRAIN WITH # OF PATIENTS WITH MORE THAN 5 ELECTRODES
+figure('Name','number of patients','Color','w'); % different figure for each symptom/mode combination
 getbrain4_ns('MNI','',1,0,'r');
 shading flat
 
@@ -95,11 +91,5 @@ for label_i = 1:length(npt_pos)
     end
 %     end 
 end
-% colormap(cm_npt)
-% cb2 = colorbar;
-% cb2.TickLength = 0;
-% 
 
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/')
-
-k = 1;
+k=1;

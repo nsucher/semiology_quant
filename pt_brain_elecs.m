@@ -1,4 +1,7 @@
-function [e_max]=pt_brain_elecs(ptsz,pt_name,reg,pt_sxmx_name,elecmatrix,anatomy, reg_count)
+function [e_max]=pt_brain_elecs(ptsz,pt_name,reg,pt_sxmx_name,elecmatrix,anatomy,reg_count,data_path)
+
+%Edited by Natalia Sucher 8/13/23
+
 % index of electrodes that are in the anatomical area (region) specified
 % for the patient (pt) specified. 
 % Note: em's 3 columns are ML(R+), AP(A+), DV (D+) 
@@ -100,74 +103,21 @@ end
 shading flat;
 alpha(.6)
 
-
-
 hold on; 
 
-
-cd('/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/OPSCEADATA/');
-
-
-% all_T = readtable('all_sign_change.xlsx', 'Sheet', pt_sxmx_name,'VariableNamingRule','preserve');
-% all_a = table2array(all_T);
-% ptsz_list = all_T.Properties.VariableNames;
-% idx_pt = contains(ptsz_list,ptsz);
-% num_col = find(idx_pt==1)-1;
-% 
-% 
-% clear elecs_all_size 
-%  
-% elecs_all_size = ones(length(elecs),length(ptsz_list)-1);
-% 
-% %dot enlargement factor
-% dot_fact = 2;
-% 
-% for p = 1:length(ptsz_list)
-%     if strcmp(ptsz_list{p}, ptsz_list{idx_pt})
-%         pt_to_plot = ptsz_list(idx_pt);
-%         for el = 1:length(elecs)
-%             if elecs(el) < length(all_a)
-%                 t_el = table2array(all_T(elecs(el),pt_to_plot{1})).*dot_fact;
-%                 elecs_all_size(el,p-1) = t_el;
-%             end
-%         end
-%         elecs_all_size(isnan(elecs_all_size)) = 1;
-%     end
-% end
-% 
-% for el = 1:length(elecs)
-%     if elecs_all_size(el,num_col) > 1
-%         mcolor = 'r'; % if electrode has positive activity change, make red
-%     elseif elecs_all_size(el,num_col) < 0
-%         mcolor = 'b'; % negative activity, make blue
-%     else
-%         mcolor = 'k'; % no activity, make black
-%     end
-%     h(el) = plot3(elecmatrix(elecs(el),1),elecmatrix(elecs(el),2),elecmatrix(elecs(el),3),'color', mcolor ,'marker','.','markersize', abs(elecs_all_size(el,num_col)));
-%     Lefty=(nanmean(elecmatrix(elecs,2))<0)*-1;
-%     tt = text(elecmatrix(elecs(el),1)-.5,elecmatrix(elecs(el),2)+1*Lefty,elecmatrix(elecs(el),3)-.5,['  ' num2str(elecs(el))],'HorizontalAlignment','left');
-% end
-% 
-% 
-% 
+cd(data_path);
 
 all_T = readtable('all_sign_change.xlsx', 'Sheet', pt_sxmx_name,'VariableNamingRule','preserve');
 all_a = table2array(all_T);
-% ptsz_list = all_T.Properties.VariableNames;
-% idx_pt = contains(ptsz_list,ptsz);
-% num_col = find(idx_pt==1)-1;
-
 
 clear elecs_all_size 
  
 elecs_all_size = ones(length(elecs),1);
 
+%DO NOT DELETE-- DOT SIZE PLOT
 %dot enlargement factor
 dot_fact = 2;
 
-% for p = 1:length(ptsz_list)
-%     if strcmp(ptsz_list{p}, ptsz_list{idx_pt})
-%         pt_to_plot = ptsz_list(idx_pt);
 for el = 1:length(elecs)
     if elecs(el) < length(all_a)
         t_el = table2array(all_T(elecs(el),{ptsz})).*dot_fact;
@@ -179,8 +129,6 @@ for el = 1:length(elecs)
     end
 end
 elecs_all_size(isnan(elecs_all_size)) = 1;
-%     end
-% end
 
 for el = 1:length(elecs)
     if elecs_all_size(el,1) > 1
@@ -191,8 +139,6 @@ for el = 1:length(elecs)
         mcolor = 'k'; % no activity, make black
     end
     h(el) = plot3(elecmatrix(elecs(el),1),elecmatrix(elecs(el),2),elecmatrix(elecs(el),3),'color', mcolor ,'marker','.','markersize', abs(elecs_all_size(el,1)));
-%     Lefty=(nanmean(elecmatrix(elecs,2))<0)*-1;
-%     tt = text(elecmatrix(elecs(el),1)-.5,elecmatrix(elecs(el),2)+1*Lefty,elecmatrix(elecs(el),3)-.5,['  ' num2str(elecs(el))],'HorizontalAlignment','left');
 end
 
 e_max = max(abs(elecs_all_size));
@@ -202,5 +148,4 @@ if isempty(e_max)
 end
 
 
-l = 0;
 

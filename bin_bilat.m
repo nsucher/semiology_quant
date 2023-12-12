@@ -6,16 +6,12 @@
 %   create new  brain with summed majority percent in each grid as colors
 %   
 
-%em must be the physical image? or the ll mean diff weights?
-
-
-
 Y=-100:10:100;
 Z=-100:10:100;
 M=nan(length(Y),length(Z),7);
 
 
-for p=1:7
+for p=1:num_ptsz
     em = szxyz_mat{p};
     w8s = sz_w8s_mat{p};
     if ~isempty(em)
@@ -37,19 +33,23 @@ for p=1:7
     end
 end
 
-Mbin=M>5; %any average weight values above ___ for each patient in each square
+
+
+
+
+Mbin=M>5; %any ll mean difference (weight change) values above 5 for each patient averaged in each square
 Mnpt=sum(~isnan(M),3);
 Mnpt_req = sum(~isnan(M),3);
-Mnpt_req(find(Mnpt < 4)) = 0;
+Mnpt_req(find(Mnpt < minnumpts)) = 0;
 Mptsig=sum(Mbin,3);
 Mptsig_req = sum(Mbin,3);
-Mptsig_req(find(Mptsig < 4)) = 0;
+Mptsig_req(find(Mptsig < minnumpts)) = 0;
 Mpercent = Mptsig_req'./Mnpt_req'*100;
 Mpercent(Mpercent == 0) = 2;
 Mpercent(isnan(Mpercent)) = 0;
 
 
-figure('color','w','position',[230 171 1000 796]);
+figure('name',num2str(minnumpts),'color','w','position',[230 171 1000 796]);
 
 ax1 = subplot(2,2,1); 
 getbrain4_ns('MNI','',1,0,'r'); %brain for orientation
@@ -62,31 +62,6 @@ ylim(Y([1 end])); zlim(Z([1 end])); %in same axis limits for orientation
 axis on
 set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
 alpha .5 % transparency to see the grid lines better
-
-% colormap(ax1,colormap([1 1 1]))
-
-
-% axis on
-% set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
-% grid on;
-% axis on
-% set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
-
-%colors
-% pink_lemonade = colormap(spring);
-% pink_lemonade(1,:) = [1 1 1]; %set zero equal to white
-
-% raspberry=makecm([0 0 0;0 1 1],7); %red-black colormap
-% raspberry = [1 1 1; raspberry];
-
-% 
-% mintyfresh=makecm([0 1 1;0 0 0],7); %cyan-black colormap
-% mintyfresh(1,:) = [1 1 1];
-% 
-
-% cm_npt = cbrewer2('Purples',7,'seq');
-% cm_npt = [1 1 1; cm_npt];
-
 
 ax3 = subplot(2,2,3); % total significant patients per square
 pcolor(Mptsig'); 
@@ -103,12 +78,8 @@ pos_pt_data = flipud(Mptsig');
 ax4 = subplot(2,2,4);  %percent sigificant patients per square
 pcolor(Mpercent); 
 axis equal; axis off;
-% cm_percent = cbrewer2('Reds',256,'seq'); %color map 
-% cm_percent = cm_percent(1:160,:);
-% 
 cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
 cm_percent = cm_percent(20:120, :);
-% cm_percent(:,1) = 1;
 cm_percent = [.85 .85 .85; cm_percent];
 
 percent_pt_data = flipud(Mpercent);
@@ -133,13 +104,4 @@ colormap(ax2,cm_npt)
 
 num_pt_data = flipud(Mnpt');
 
-
-% colormap(spring)
-
-
-
-
-% grid on;
 k = 1;
-
-% for l = 1:length(linspace(0,50,7))
