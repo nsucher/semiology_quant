@@ -15,8 +15,9 @@ min_elec = 5; % MINIMUM ELECTRODES REQUIRED PER NEUROANATOMICAL LOCATIONS
 min_pt = ceil(num_ptsz/2); %  MINIMUM PATIENTS REQUIRED FOR MAJORITY 
 
 %SET PATH IF COPIED ELSEWHERE
-opscea_path = [pwd, '/'];
-% opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; %set your own directory here
+% opscea_path = [pwd, '/'];
+opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; %set your own directory here
+python_path = '/home/nsucher/.conda/envs/semiology_quant/bin/python';
 data_path= [opscea_path 'OPSCEADATA/'];   %path for parameters sheet
 sx_input_list = {'chx'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
@@ -24,7 +25,7 @@ perdur_input = '10'; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 
 for sx_i = 1:length(sx_input_list)
     sx_input = sx_input_list(sx_i);
-    [ts_sx, sx_sec] = neurosem_plot(sx_i,uber_pt,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
+    [ts_sx, sx_sec] = neurosem_plot(uber_pt,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
 end
 % 
 % manual_ptsz = {'EC91_03','EC96_01','EC107_01','EC133_03', 'EC166_01','EC228_03','EC229_02'}; % specify which patient and seizure

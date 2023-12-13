@@ -1,4 +1,4 @@
-function [ts_sx,sx_sec] = neurosem_plot(sx_i,uber_pt,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
+function [ts_sx,sx_sec] = neurosem_plot(uber_pt,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
 
 
 % Function to generate figures analyzing change of neural activity during onset of seizure symptom
@@ -141,7 +141,7 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
 
         terminate(pyenv)
 
-        pyenv("ExecutionMode","OutOfProcess");
+        pyenv("ExecutionMode","OutOfProcess","Version",python_path);
         
         [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         
@@ -216,7 +216,7 @@ pv_all_brain(sx_input,lat_sxmx,num_ptsz,num_elecs,min_elec,min_pt,opscea_path,da
 
 % OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
 sx_sec = first_sx_vec/5;
-% max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,minnumpts,opscea_path,data_path) %vertex heatmap on right hemisphere of brain
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,min_pt,opscea_path,data_path) %vertex heatmap on right hemisphere of brain
 % % 
 % max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path) %vertex heatmap on left hemisphere of brain
 % 
