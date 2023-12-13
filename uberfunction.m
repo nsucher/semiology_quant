@@ -19,9 +19,9 @@ opscea_path = [pwd, '/'];
 % opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; %set your own directory here
 % opscea_path = '/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant';
 if contains(opscea_path,'/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant')
-    python_path = '/home/nsucher/.conda/envs/semiology_quant/bin/python';
+    python_path = '/Users/nataliasucher/opt/anaconda3/bin/python';
 else
-    python_path = '/usr/bin/python';
+    python_path = '/home/nsucher/.conda/envs/semiology_quant/bin/python';
 end
 
 data_path= [opscea_path 'OPSCEADATA/'];   %path for parameters sheet
