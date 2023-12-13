@@ -18,7 +18,12 @@ min_pt = ceil(num_ptsz/2); %  MINIMUM PATIENTS REQUIRED FOR MAJORITY
 opscea_path = [pwd, '/'];
 % opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; %set your own directory here
 % opscea_path = '/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant';
-python_path = '/home/nsucher/.conda/envs/semiology_quant/bin/python';
+if contains(opscea_path,'/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant')
+    python_path = '/home/nsucher/.conda/envs/semiology_quant/bin/python';
+else
+    python_path = '/usr/bin/python';
+end
+
 data_path= [opscea_path 'OPSCEADATA/'];   %path for parameters sheet
 sx_input_list = {'chx'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
