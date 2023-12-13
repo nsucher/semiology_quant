@@ -15,8 +15,9 @@ min_elec = 5; % MINIMUM ELECTRODES REQUIRED PER NEUROANATOMICAL LOCATIONS
 min_pt = ceil(num_ptsz/2); %  MINIMUM PATIENTS REQUIRED FOR MAJORITY 
 
 %SET PATH IF COPIED ELSEWHERE
-% opscea_path = [pwd, '/'];
-opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; %set your own directory here
+opscea_path = [pwd, '/'];
+% opscea_path = '/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'; %set your own directory here
+% opscea_path = '/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant';
 python_path = '/home/nsucher/.conda/envs/semiology_quant/bin/python';
 data_path= [opscea_path 'OPSCEADATA/'];   %path for parameters sheet
 sx_input_list = {'chx'};% EDIT THIS TO REFLECT THE SYMPTOM
