@@ -41,7 +41,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         pv_brain(pos_pv_m,neg_pv_m,pos_pv_T,neg_pv_T,...
-                 em_m,pt_name,sz_name,ptsz_name,ptsz_i,pt_sxmx_name,laterality);
+                 em_m,pt_name,sz_name,ptsz_name,ptsz_i,pt_sxmx_name,laterality,opscea_path,data_path);
 
         py_w8s_cell = cell(w8s_array);
         py_anat_cell = cell(anat_array);
@@ -64,7 +64,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
         cd(opscea_path);
         
-        getbrain4_ns(pt_name,sz_name,1,0,laterality); %display brain 
+        getbrain4_ns(pt_name,sz_name,1,0,laterality,opscea_path,data_path); %display brain 
         shading flat
         
         
@@ -114,14 +114,13 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
                 Lcrtx=Lcortex.cortex; 
                 clear Lcortex
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-            [~,prm_allPtSz]=xlsread([opscea_path 'OPSCEAparams'],'params'); 
+            [~,prm_allPtSz]=xlsread([data_path 'OPSCEAparams.xlsx'],'params'); 
                 fields_SZ=prm_allPtSz(1,:); % header for columns of seizure parameters
                 prm=prm_allPtSz(strcmp(pt_name,prm_allPtSz(:,1))&strcmp(sz_name,prm_allPtSz(:,2)),:);
                 if isempty(prm); error(['ATTENTION: No entry exists for ' pt_name ' seizure ' sz_name ' in the params master sheet']); end
         
             % Import parameters for patient's specific plot (layout of video frame)
-            [~,plt]=xlsread([opscea_path 'OPSCEAparams'],pt_name); 
+            [~,plt]=xlsread([data_path 'OPSCEAparams.xlsx'],pt_name); 
                 fields_PLOT=plt(1,:); plt(1,:)=[]; % header for columns of plotting parameters
                 plottype=plt(:,strcmpi(fields_PLOT,'plottype')); %type of plot for each subplot (accepts: iceeg, surface, depth, or colorbar)
         

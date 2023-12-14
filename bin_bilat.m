@@ -52,7 +52,7 @@ Mpercent(isnan(Mpercent)) = 0;
 figure('name',num2str(minnumpts),'color','w','position',[230 171 1000 796]);
 
 ax1 = subplot(2,2,1); 
-getbrain4_ns('MNI','',1,0,'r'); %brain for orientation
+getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path); %brain for orientation
 hold on;
 shading interp
 axis equal; axis off; set(gca,'clipping','off'); lightsout; litebrain('r',1)

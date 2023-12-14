@@ -9,7 +9,7 @@ req_elecs = num_elecs >= min_elec; %matrix anatomies by patient with sufficient 
 % establish neuroanatomy labels
 
 figure('Name',[sx_input{1,1} '- positive significance'],'Color','w'); % different figure for each symptom/mode combination
-getbrain4_ns('MNI','',1,0,'r');
+getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path);
 shading flat
 
 npt_pos = nan(26,1);
@@ -65,11 +65,11 @@ for label_i = 1:length(npt_pos)
             percent_pos_req(label_i) = npt_pos(label_i) / pos_num_elecs_min(label_i);
             color_idx = round((npt_pos(label_i) / pos_num_elecs_min(label_i)) * length(cm_percent));
             if color_idx > 0
-                highlightbrain('MNI',pos_labels(label_i),[1 1 1],[0 1],0,0,'r');
-                highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'r');
+                highlightbrain('MNI',pos_labels(label_i),[1 1 1],[0 1],0,0,'r',opscea_path,data_path);
+                highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'r',opscea_path,data_path);
             elseif color_idx == 0
                 color_idx = 1;
-                highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'r');
+                highlightbrain('MNI',pos_labels(label_i),[cm_percent(color_idx,:);0 0 0],[0 1],0,0,'r',opscea_path,data_path);
             end
     end
 end
@@ -80,14 +80,14 @@ end
 
 %PLOT PURPLE BRAIN WITH # OF PATIENTS WITH MORE THAN 5 ELECTRODES
 figure('Name','number of patients','Color','w'); % different figure for each symptom/mode combination
-getbrain4_ns('MNI','',1,0,'r');
+getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path);
 shading flat
 
 for label_i = 1:length(npt_pos)
 %     if num_elecs_min(label_i) >= minnumpts
     color_idx = round((num_elecs_min(label_i) / npt) * length(cm_npt));
     if color_idx > 0
-        highlightbrain('MNI',pos_labels(label_i),[cm_npt(color_idx,:);0 0 0],[0 1],0,0,'r');
+        highlightbrain('MNI',pos_labels(label_i),[cm_npt(color_idx,:);0 0 0],[0 1],0,0,'r',opscea_path,data_path);
     end
 %     end 
 end

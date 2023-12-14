@@ -140,8 +140,8 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
         cd(opscea_path)
 
         terminate(pyenv)
-
         pyenv("ExecutionMode","OutOfProcess","Version",python_path);
+
         
         [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         
@@ -176,26 +176,26 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
             end
         end
         %ELECTRODES BY REGION PLOT
-        reg_count = 0;
-        for reg_i = 1:length(reg_all)
+        % reg_count = 0;
+        % for reg_i = 1:length(reg_all)
+        % 
+        %     reg_count = reg_count+1;
+        %     cd(opscea_path)
 
-            reg_count = reg_count+1;
-            cd(opscea_path)
+%            if mni == 1
+%                [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},"MNI",reg_all{reg_i},lat_sxmx{sz_count}, mni_xyz, anatomy, reg_count, opscea_path, data_path);
+%            else
+%                [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},pt_name,reg_all{reg_i},lat_sxmx{sz_count}, em1, anatomy, reg_count, opscea_path, data_path);
+%            end
 
-            if mni == 1
-                [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},"MNI",reg_all{reg_i},lat_sxmx{sz_count}, mni_xyz, anatomy, reg_count, data_path);
-            else
-                [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},pt_name,reg_all{reg_i},lat_sxmx{sz_count}, em1, anatomy, reg_count, data_path);
-            end
-
-            e_max_vec(reg_i,ptsz_i) = e_max;
-        end
+%            e_max_vec(reg_i,ptsz_i) = e_max;
+%        end
 
         mni_xyz_cell{ptsz_i} = good_mni_mat;
         sz_nns_mat{1,ptsz_i} =  sz_nns;
         sz_w8s_mat{1,ptsz_i} = sz_w8s; 
         szxyz_mat{1,ptsz_i} = szxyz;
-        elecs_msize(1,ptsz_i) = max(e_max_vec(:,ptsz_i));
+%        elecs_msize(1,ptsz_i) = max(e_max_vec(:,ptsz_i));
 %         cd(opscea_path)
 %         mondrian_plot(pt_name,sz_name,10,ts_sx/5,1,opscea_path,data_path);
     end
@@ -214,9 +214,12 @@ pv_all_brain(sx_input,lat_sxmx,num_ptsz,num_elecs,min_elec,min_pt,opscea_path,da
 
 % [sem_start,plot_start,plot_end] = mondrian_plot(uber_pt,uber_sz,10,ts_sx/5,1,opscea_path,data_path);
 
-% OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
+%OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
 sx_sec = first_sx_vec/5;
-max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,min_pt,opscea_path,data_path) %vertex heatmap on right hemisphere of brain
+
+%UNCOMMENT THIS FOR APPROACH 2 FIGURES VERTEX BY VERTEX
+
+%max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,min_pt,opscea_path,data_path) %vertex heatmap on right hemisphere of brain
 % % 
 % max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path) %vertex heatmap on left hemisphere of brain
 % 

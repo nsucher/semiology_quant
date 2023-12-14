@@ -1,4 +1,4 @@
-function [e_max]=pt_brain_elecs(ptsz,pt_name,reg,pt_sxmx_name,elecmatrix,anatomy,reg_count,data_path)
+function [e_max]=pt_brain_elecs(ptsz,pt_name,reg,pt_sxmx_name,elecmatrix,anatomy,reg_count,opscea_path,data_path)
 
 %Edited by Natalia Sucher 8/13/23
 
@@ -96,9 +96,9 @@ elseif isL
 end
 
 if reg_count == 1
-    getbrain4_ns(pt_name,'',1,1,lat);
+    getbrain4_ns(pt_name,'',1,1,lat,opscea_path,data_path);
 else
-    getbrain4_ns(pt_name,'',0,0,lat);
+    getbrain4_ns(pt_name,'',0,0,lat,opscea_path,data_path);
 end
 shading flat;
 alpha(.6)

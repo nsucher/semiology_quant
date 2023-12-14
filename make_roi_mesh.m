@@ -1,4 +1,4 @@
-function mesh = make_roi_mesh(subj,hem,label_list,roi_name,debug_plot,sav)
+function mesh = make_roi_mesh(subj,hem,label_list,roi_name,debug_plot,sav,opscea_path,data_path)
 % function mesh = make_roi_mesh(subj, hem, label_list)
 %
 % Input:
@@ -24,15 +24,17 @@ if nargin <5
     debug_plot = 0;
 end
 
-fsdir =  '/Users/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA'; %'/Volumes/Emma/OPSCEADATA'; %'/Volumes/Sz3D/Sz3DDATA'; % Directory with your pial meshes and the labels
-if exist(fsdir)==0; fsdir='/Users/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA'; end
-subjdir = sprintf('%s/%s', fsdir, subj);
+fsdir = data_path; %'/Users/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA'; %'/Volumes/Emma/OPSCEADATA'; %'/Volumes/Sz3D/Sz3DDATA'; % Directory with your pial meshes and the labels
+if exist(fsdir)==0 
+    fsdir= data_path; %'/Users/nataliasucher/Desktop/UCSF/Coding/OPSCEA/OPSCEADATA'; 
+end
+subjdir = sprintf('%s/%s', data_path, subj);
 %if ~exist([subjdir , '/Imaging/Meshes']); fsdir =  '/Users/jkleen/Desktop/ChangLab/Data'; subjdir = sprintf('%s/%s', fsdir, subj); end %may be in ChangLab folder
 recondir = sprintf('%s/Imaging/Meshes', subjdir); % for cvs_avg35_inMNI152
 
 labeldir = sprintf('%s/Imaging/label/gyri', subjdir);
 % outfile = sprintf('%s/%s_%s_%s_pial.mat', recondir, subj, hem, roi_name);
-outfile = sprintf('%s/%s_%s%s_%s_pial.mat', recondir, subj, hem(1), hem(2), roi_name);
+outfile = sprintf('%s/%s_%s%s_%s_pial.mat', recondir, subj, hem(1), hem(2), roi_name{1});
 
 % Load the cortical surface mesh
 % load(sprintf('%s/%s_%s_pial.mat', recondir, subj, hem));
@@ -79,6 +81,6 @@ fprintf(1,'Saving %s recon in %s\n', roi_name, outfile);
 save(outfile, 'mesh');
 end
 
-if debug_plot
-    ctmr_gauss_plot(mesh, [0 0 0], 0, hem);
-end
+%if debug_plot
+%    ctmr_gauss_plot(mesh, [0 0 0], 0, hem);
+%end

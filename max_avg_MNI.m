@@ -103,14 +103,15 @@ figure('color','w','position',[230 171 1440 796]);
 cm_npt = cbrewer2('Purples',7,'seq');
 
 
-getbrain4_ns('MNI','',1,0,hem) %plot empty brain
+getbrain4_ns('MNI','',1,0,hem,opscea_path,data_path) %plot empty brain
 shading interp
 axis equal; axis off; set(gca,'clipping','off'); lightsout; 
 litebrain(hem,.75)
 hold on
 
 for v_m = 1:nvert %for this specific vertex
-    if nptAtVerts(v_m)>=minnumpts %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
+%    if nptAtVerts(v_m)>=minnumpts %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
+    if nptAtVerts(v_m)>=1 %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
         plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color', cm_npt(nptAtVerts(v_m),:),'markersize',15); %pink lemonade plot of number of patients with vertices dst_radius away from electrodes
         disp([num2str(round(v_m/nvert*100,2)) '%'])
     end

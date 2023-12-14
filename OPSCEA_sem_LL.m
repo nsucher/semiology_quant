@@ -1,4 +1,4 @@
-function OPSCEA_sem_LL(pt,sz,showlabels,jumpto,to_plot,plot_start,plot_end)
+function OPSCEA_sem_LL(pt,sz,showlabels,jumpto,to_plot,plot_start,plot_end,opscea_path,data_path)
 % EXAMPLE USAGE: OPSCEA('UCSF1','01',1,0)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
@@ -38,13 +38,15 @@ if to_plot
     if ~exist('showlabels','var')||isempty(showlabels); showlabels=true; end %default displays ICEEG and depth labels
     if ~exist('jumpto','var')||isempty(jumpto); jumpto=0; end 
     
-    opsceapath=['/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'];   %path for parameters sheet
-    opsceadatapath=[opsceapath 'OPSCEADATA/'];   %path for OPSCEA ICEEG and imaging data
-        if ~exist(opsceadatapath,'dir'); error('Directory for your data needs to be corrected'); end
-    cd(opsceapath);
+ %   opscea_path=['/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'];   %path for parameters sheet
+ %   data_path=[opscea_path 'OPSCEADATA/'];   %path for OPSCEA ICEEG and imaging data
+    if ~exist(data_path,'dir') 
+        error('Directory for your data needs to be corrected'); 
+    end
+    cd(opscea_path);
     
     ptsz=[pt '_' sz]; % prefix for filenames of specific seizure
-    ptpath=[opsceadatapath pt '/']; % patient's folder
+    ptpath=[data_path pt '/']; % patient's folder
     szpath= [ptpath ptsz '/']; % specific seizure's folder
     disp(['Running ' pt ', seizure ' sz '...']);
     
@@ -58,12 +60,12 @@ if to_plot
     
     %% Import parameters
     % for specific seizure 
-    [~,prm_allPtSz]=xlsread([opsceapath 'OPSCEAparams'],'params'); 
+    [~,prm_allPtSz]=xlsread([data_path 'OPSCEAparams'],'params'); 
         fields_SZ=prm_allPtSz(1,:); % header for columns of seizure parameters
         prm=prm_allPtSz(strcmp(pt,prm_allPtSz(:,1))&strcmp(sz,prm_allPtSz(:,2)),:);
         if isempty(prm); error(['ATTENTION: No entry exists for ' pt ' seizure ' sz ' in the params master sheet']); end
     % Import parameters for patient's specific plot (layout of video frame)
-    [~,plt]=xlsread([opsceapath 'OPSCEAparams'],pt); 
+    [~,plt]=xlsread([data_path 'OPSCEAparams'],pt); 
         fields_PLOT=plt(1,:); plt(1,:)=[]; % header for columns of plotting parameters
         plottype=plt(:,strcmpi(fields_PLOT,'plottype')); %type of plot for each subplot (accepts: iceeg, surface, depth, or colorbar)
     
@@ -244,9 +246,15 @@ if to_plot
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    vidperiodidx=round(S.VIDperiod(1)*sfx+1):S.VIDperiod(2)*sfx;
     
-    d=d(:,vidperiodidx); ntp=length(vidperiodidx);
+    if S.VIDperiod(2)*sfx > size(d,2)
+        vidperiodidx=round(S.VIDperiod(1)*sfx+1):size(d,2);
+    else
+        vidperiodidx=round(S.VIDperiod(1)*sfx+1):S.VIDperiod(2)*sfx;
+    end
+
+    d=d(:,vidperiodidx);
+    ntp=length(vidperiodidx);
     LL=LL(:,vidperiodidx); 
     ts=ts(vidperiodidx); 
     
@@ -354,7 +362,9 @@ if to_plot
     
           case 'COLORBAR' 
                     hold off; plot(1,1); title(''); axis off; cb=colorbar; cb.Ticks=[0 1]; cb.Limits=[0 1]; cb.TickLabels={'0',num2str(S.cax(2))}; cb.FontSize=11; cb.Location='west'; 
-                    ylabel(cb,'z-scores','fontsize',12); colormap(gca,S.cm(floor(size(S.cm,1)/2):end,:)); %Z-scores above baseline
+                    ylabel(cb,'z-scores','fontsize',12);
+                    cd(data_path)
+                    colormap_ns(gca,S.cm(ceil(size(S.cm,1)/2):end,:)); %Z-scores above baseline
           case 'SURFACE' % plotting surfaces only
               if matches(surfaces{j},'rcortex')
                   hold off; srf=regexp(surfaces{j},',','split'); % list the specific surfaces wanted for this subplot
@@ -399,14 +409,14 @@ if to_plot
                         if pltshowplanes(j)||(strcmp(viewangle{j},'i')&&~isempty(intersect(srf,'wholebrain'))); view(180,270); end %orients the "show planes" slice to a classic axial perspective
                         axis(axislim); if strcmpi(viewangle{j},'i')||strcmpi(viewangle{j},'s')||strcmpi(viewangle{j},'a')||strcmpi(viewangle{j},'p');  if ~strcmpi(pt,'NO181'); axis([axislim(1)*isL+10*isR axislim(2)*isR+10*isL  axislim(3:6)]); end; end
                         zoom(pltzoom(j)); 
-                        hold on; colormap(gca,S.cm); set(gca,'Clipping','off')
+                        hold on; colormap_ns(gca,S.cm); set(gca,'Clipping','off')
                         clear srfplot
               end
 %           case 'DEPTH' %plot depth electrode with parallel slice (plus surface behind it)
 %             eN=depths{j}; [eNID,~,~]=intersect(find(nns),eN); %Get the specific channels for this depth, ignoring bad channels
 %             if      isempty(eNID); axis off; if isfirstframe; drows(drows==j)=[]; end
 %             elseif ~isempty(eNID); I.new_em=new_em; I.new_w8s=new_w8s; I.nns=nns; sliceinfo(j).depthlabels=depthlabels{j}; 
-%               OPSCEAsurfslice(pt,S.sliceplane,new_em(eNID,:),new_w8s(eNID),opsceadatapath,[],S.cax,S.cm,S.gsp,j,isfirstframe)
+%               OPSCEAsurfslice(pt,S.sliceplane,new_em(eNID,:),new_w8s(eNID),data_path,[],S.cax,S.cm,S.gsp,j,isfirstframe)
 %               plot3(new_em(eNID,1),new_em(eNID,2)+((S.sliceplane=='c')),new_em(eNID,3),'k-'); % depth probe (line between electrodes)
 %               plot3(new_em(eNID,1),new_em(eNID,2)+((S.sliceplane=='c')),new_em(eNID,3),'k.','markersize',10); % depth electrodes (dots)
 %               cameratoolbar('setmode','')
@@ -459,10 +469,10 @@ if to_plot
     
     
     cd(szpath) % Save video in the same data folder for that seizure
-    if showlabels; vidfilename=[ptsz '_video']; else vidfilename=[num2str(str2num(pt(3:end))*11) '_' sz]; end
-    v=VideoWriter(vidfilename,'MPEG-4'); 
-    v.FrameRate = 15; 
-    open(v); 
-    writeVideo(v,F); 
-    close(v); 
+    % if showlabels; vidfilename=[ptsz '_video']; else vidfilename=[num2str(str2num(pt(3:end))*11) '_' sz]; end
+    % v=VideoWriter(vidfilename,'MPEG-4'); 
+    % v.FrameRate = 15; 
+    % open(v); 
+    % writeVideo(v,F); 
+    % close(v); 
 end    

@@ -1,4 +1,4 @@
-function pv_brain(pos_pv_m,neg_pv_m,pos_pv_T,neg_pv_T,em_m,pt_name,sz_name,ptsz_name,ptsz_i,sxmx_name,laterality)
+function pv_brain(pos_pv_m,neg_pv_m,pos_pv_T,neg_pv_T,em_m,pt_name,sz_name,ptsz_name,ptsz_i,sxmx_name,laterality,opscea_path,data_path)
 
 %created by N. Sucher at the Kleen Lab in UCSF 2/9/2023
 %edited 8/8/23
@@ -22,7 +22,7 @@ if any(pos_pv_m)
     figure('Name',[sxmx_name ' ' ptsz_name ': positive significance'],'Color','w'); % different figure for each symptom/mode combination
 
 
-    getbrain4_ns(pt_name,sz_name,1,0,laterality);
+    getbrain4_ns(pt_name,sz_name,1,0,laterality,opscea_path,data_path);
    
     caxis([-max_pval max_pval])
 
@@ -46,7 +46,7 @@ if any(pos_pv_m)
                     pv = 102;
                 end
                 c = cm(pv,:);
-                highlightbrain(pt_name,pos_labels(label_i),[c;0 0 0],[0 1],0,0,laterality);
+                highlightbrain(pt_name,pos_labels(label_i),[c;0 0 0],[0 1],0,0,laterality,opscea_path,data_path);
                 colormap(gca,cm)
 
                 for i_row=1:size(szxyz(:,1))

@@ -1,4 +1,4 @@
-function [mesh_handle,mesh]=highlightbrain(pt,ROI,colr,edgeface,plotbrain,newfig,hemi)
+function [mesh_handle,mesh]=highlightbrain(pt,ROI,colr,edgeface,plotbrain,newfig,hemi,opscea_path,data_path)
 % pt is string patient name, such as 'EC129', or just 'MNI' for standard brain
 % ROI is ROIions of interest as cells of strings, 
 %     for example {'superiortemporal','parsopercularis','entorhinal'}
@@ -56,10 +56,11 @@ z=strcmp(ROI,'ins'); if any(z); ROI{1}='insula'; end
 z=strcmp(ROI,{'cing','cingulate'}); if any(z); ROI={'rostralanteriorcingulate','caudalanteriorcingulate','posteriorcingulate','isthmuscingulate'}; end
 z=strcmp(ROI,{'mfg'}); if any(z); ROI={'rostralmiddlefrontal','caudalmiddlefrontal'}; end
 
-mesh=make_roi_mesh(pt,hemi,ROI,'test',0);
+mesh=make_roi_mesh(pt,hemi,ROI,ROI,'test',0,opscea_path,data_path);
 ea = edgeface(1);
 fa = edgeface(2);
 hold on
+cd(data_path)
 mesh_handle = ctmr_gauss_plot_addl(mesh, [0 0 0], 0, hemi, 0);
 
 set (mesh_handle, 'FaceColor', colr(1,:),'EdgeColor',colr(size(colr,1),:), 'FaceAlpha', fa,'EdgeAlpha', ea);
