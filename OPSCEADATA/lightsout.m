@@ -1,0 +1,1 @@
+delete(findall(gca,'type','light')); 
