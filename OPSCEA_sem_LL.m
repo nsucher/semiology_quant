@@ -350,7 +350,7 @@ if to_plot
     
     
               subplot(2,100,62:100)
-              [si]=LL_plot(new_anat,new_LL,ts,jumpto,plot_start,plot_end,sfx);
+              [si]=LL_plot(new_anat,new_LL,ts,jumpto,plot_start,plot_end,sfx,data_path);
     %           LL_plot(new_anat,new_LL,ts,S,SEMperiod)
 %               clear h; %replot red line (delete or clear
               % ?)

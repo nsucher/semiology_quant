@@ -46,6 +46,7 @@ if any(pos_pv_m)
                     pv = 102;
                 end
                 c = cm(pv,:);
+                cd(opscea_path)
                 highlightbrain(pt_name,pos_labels(label_i),[c;0 0 0],[0 1],0,0,laterality,opscea_path,data_path);
                 colormap(gca,cm)
 

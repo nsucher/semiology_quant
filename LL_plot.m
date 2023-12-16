@@ -1,4 +1,4 @@
-function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,plot_start,plot_end,sfx)
+function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,plot_start,plot_end,sfx,data_path)
 %     Created by Natalia Sucher and Jon Kleen May 10 2022, Updated May 26
 %     2022 by NS
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        %Electrode Activity
@@ -98,6 +98,7 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,p
            pcolor(ts(plot_start*sfx:plot_end*sfx),1:size(new_LL,1),LL_s(:,plot_start*sfx:plot_end*sfx));
 
 %            cm = S.cm(floor(size(S.cm,1)/2):end,:);
+           cd(data_path)
            cm = cmOPSCEAjet * .95;
            colormap(cm);
            shading flat;
