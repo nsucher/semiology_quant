@@ -107,6 +107,9 @@ if ~isempty(arg)
         error(message('MATLAB:colormap:InvalidInputRange'))
     end
 end
+
+arg = arg *.95;
+
 set(figH, 'Colormap', arg);
 if nargout == 1
     map = get(figH, 'Colormap');
