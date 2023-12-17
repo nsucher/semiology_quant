@@ -350,7 +350,7 @@ if to_plot
     
     
               subplot(2,100,62:100)
-              [si]=LL_plot(new_anat,new_LL,ts,jumpto,plot_start,plot_end,sfx,data_path);
+              [si]=LL_plot(new_anat,new_LL,ts,jumpto,plot_start,plot_end,sfx,data_path,S.cax);
     %           LL_plot(new_anat,new_LL,ts,S,SEMperiod)
 %               clear h; %replot red line (delete or clear
               % ?)
@@ -361,10 +361,12 @@ if to_plot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
           case 'COLORBAR' 
-                    hold off; plot(1,1); title(''); axis off; cb=colorbar; cb.Ticks=[0 1]; cb.Limits=[0 1]; cb.TickLabels={'0',num2str(S.cax(2))}; cb.FontSize=11; cb.Location='west'; 
-                    ylabel(cb,'z-scores','fontsize',12);
                     cd(data_path)
                     colormap_ns(gca,S.cm(ceil(size(S.cm,1)/2):end,:)); %Z-scores above baseline
+                    hold off; plot(1,1); title(''); axis off; 
+                    cb=colorbar; cb.Ticks=[0 1]; cb.Limits=[0 1]; cb.TickLabels={0,num2str(S.cax(2))}; cb.FontSize=11; cb.Location='west'; 
+                    ylabel(cb,'z-scores','fontsize',12);
+
           case 'SURFACE' % plotting surfaces only
               if matches(surfaces{j},'rcortex')
                   hold off; srf=regexp(surfaces{j},',','split'); % list the specific surfaces wanted for this subplot

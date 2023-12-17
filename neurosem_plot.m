@@ -203,12 +203,14 @@ end
  
 
 close all 
-cd(opscea_path)
 
 % PAPER: FIGURE __ / POSTER: APPROACH 3
 for minnumpts = 1:min_pt
+    cd(opscea_path)
     bin_bilat %pixel plot of collapsed bilateral hemisphere 
 end
+
+cd(opscea_path)
 
 pv_all_brain(sx_input,lat_sxmx,num_ptsz,num_elecs,min_elec,min_pt,opscea_path,data_path) %p value heatmap of combined total patients by neuroanatomical region
 

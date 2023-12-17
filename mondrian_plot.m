@@ -152,6 +152,7 @@ if to_plot
     figure('Color','w','Name',['Semiology: ' pt '_' sz])
     imagesc(semts,1:size(m,1),m)
 
+    hold on;
     plot_start = sem_start-(perdur*3);
     plot_end = sem_end+perdur;
 

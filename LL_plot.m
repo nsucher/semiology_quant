@@ -1,4 +1,4 @@
-function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,plot_start,plot_end,sfx,data_path)
+function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,plot_start,plot_end,sfx,data_path,cax)
 %     Created by Natalia Sucher and Jon Kleen May 10 2022, Updated May 26
 %     2022 by NS
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        %Electrode Activity
@@ -109,8 +109,7 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,p
 
            title('Line Length')
            tx=diff(xlim);
-%            caxis(S.cax)
-           caxis([0 20])
+           caxis(cax);
 
            hold on; plot(xlim,[u2_s u2_s],'w-')
 
