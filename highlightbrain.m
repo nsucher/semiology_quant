@@ -60,7 +60,7 @@ mesh=make_roi_mesh(pt,hemi,ROI,ROI,'test',0,opscea_path,data_path);
 ea = edgeface(1);
 fa = edgeface(2);
 hold on
-cd(data_path)
+cd(opscea_path)
 mesh_handle = ctmr_gauss_plot_addl(mesh, [0 0 0], 0, hemi, 0);
 
 set (mesh_handle, 'FaceColor', colr(1,:),'EdgeColor',colr(size(colr,1),:), 'FaceAlpha', fa,'EdgeAlpha', ea);

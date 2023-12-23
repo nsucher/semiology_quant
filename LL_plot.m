@@ -1,4 +1,4 @@
-function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,plot_start,plot_end,sfx,data_path,cax)
+function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,cax)
 %     Created by Natalia Sucher and Jon Kleen May 10 2022, Updated May 26
 %     2022 by NS
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        %Electrode Activity
@@ -94,11 +94,8 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,p
 %            setGlobal_sem_w8s(LL_s,ytl_LL,yt_LL,u2_s,u3_s)
 
            % display plot with pcolor        
-%            pcolor(ts(sem_start:end),1:size(new_LL,1),LL_s(:,sem_start:end));
            pcolor(ts(plot_start*sfx:plot_end*sfx),1:size(new_LL,1),LL_s(:,plot_start*sfx:plot_end*sfx));
 
-%            cm = S.cm(floor(size(S.cm,1)/2):end,:);
-           cd(data_path)
            cm = cmOPSCEAjet * .95;
            colormap(cm);
            shading flat;
@@ -107,19 +104,12 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,sem_start,p
            xlabel('Time (seconds)')           
            set(gca,'ytick',yt_LL,'yticklabel',ytl_LL,'ydir','reverse','yaxislocation','right','fontsize',12)
 
+
            title('Line Length')
            tx=diff(xlim);
-           caxis(cax);
+           caxis(cax); %modulate saturation depending on OPSCEAparams color axis
 
-           hold on; plot(xlim,[u2_s u2_s],'w-')
-
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        %Time Stamp
-    % Time Marking
-            %show vertical white lines to denote when semiology plot beginsand ends
-%             SEMperiod = getGlobalSEMperiod;
-%             plot([SEMperiod(1) SEMperiod(1)],ylim,'w-');
-%             plot([SEMperiod(2) SEMperiod(2)],ylim,'w-');
-            %hold on; 
-            k = 2;
-
+           hold on; plot(xlim,[u2_s u2_s],'w-'); %white horizontal lines separating brain regions
+           plot([to_plot to_plot],ylim,'m-') % vertical magenta line at specified symptom onset
+       
             

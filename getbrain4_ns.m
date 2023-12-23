@@ -56,7 +56,7 @@ if nargin>=2
         
         if bilat||strcmp(hem(1),'l') %plot left brain
             load([ptdir '_lh_pial.mat'],'cortex'); 
-            cd(data_path)
+            cd(opscea_path)
             ctmr_gauss_plot_addl(cortex,[],[],'lh'); 
             cortexout=[cortexout cortex];
 %             litebrain('l',.25)
@@ -64,7 +64,7 @@ if nargin>=2
             
         if bilat||strcmp(hem(1),'r') % plot right brain
             load([ptdir '_rh_pial.mat'],'cortex'); 
-            cd(data_path)
+            cd(opscea_path)
             ctmr_gauss_plot_addl(cortex,[],[],'rh'); 
             cortexout=[cortexout cortex];
 %             litebrain('r',.25)

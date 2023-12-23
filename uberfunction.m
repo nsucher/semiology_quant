@@ -27,17 +27,21 @@ end
 data_path= [opscea_path 'OPSCEADATA/'];   %path for parameters sheet
 sx_input_list = {'chx'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
-perdur_input = '10'; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
+perdur_input = 10; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 
+
+% APPROACH 1,2,3 AND ALL INDIVIDUAL PATIENT ACTIVITY CHANGES AND INDIVIDUAL AND INTRA-PATIENT PVALUES
 for sx_i = 1:length(sx_input_list)
     sx_input = sx_input_list(sx_i);
     [ts_sx, sx_sec] = neurosem_plot(uber_pt,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
 end
-% 
-% manual_ptsz = {'EC91_03','EC96_01','EC107_01','EC133_03', 'EC166_01','EC228_03','EC229_02'}; % specify which patient and seizure
-% % 
-% for m_p = length(manual_ptsz)
-[sem_start,plot_start,plot_end] = mondrian_plot(uber_pt,uber_sz,10,ts_sx/5,1,opscea_path,data_path);
-% end
- 
-OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,110,250,opscea_path,data_path) 
+
+to_plot = sx_sec(1);
+
+% SYMPTOM INDEX AS TIME SERIES (MONDRIAN PLOT)
+yes_plot = 1; %1 = plot it, 0 = don't plot
+[sem_start,plot_start,plot_end] = mondrian_plot(uber_pt,uber_sz,perdur_input,yes_plot,to_plot,opscea_path,data_path);
+
+
+% OPSCEA ICEEG, LINE LENGTH TRANSFORM AS PLOT AND 3D BRAIN HEATMAP
+OPSCEA_sem_LL(uber_pt,uber_sz,1,to_plot,to_plot,110,250,opscea_path,data_path) 

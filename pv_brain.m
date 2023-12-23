@@ -51,7 +51,7 @@ if any(pos_pv_m)
                 colormap(gca,cm)
 
                 for i_row=1:size(szxyz(:,1))
-                    plot3(szxyz(i_row,1),szxyz(i_row,2),szxyz(i_row,3),'k.','markersize',15); 
+                    plot3(szxyz(i_row,1),szxyz(i_row,2),szxyz(i_row,3),'o','Color','k','MarkerFaceColor','k','MarkerSize',2.5); 
                 end 
             end
         end

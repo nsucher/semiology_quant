@@ -35,8 +35,13 @@ function OPSCEA_sem_LL(pt,sz,showlabels,jumpto,to_plot,plot_start,plot_end,opsce
 %     Updated by Natalia Sucher May 26 2022
 
 if to_plot
-    if ~exist('showlabels','var')||isempty(showlabels); showlabels=true; end %default displays ICEEG and depth labels
-    if ~exist('jumpto','var')||isempty(jumpto); jumpto=0; end 
+    if ~exist('showlabels','var')||isempty(showlabels);
+        showlabels=true; 
+    end %default displays ICEEG and depth labels
+
+    if ~exist('jumpto','var')||isempty(jumpto); 
+        jumpto=0; 
+    end 
     
  %   opscea_path=['/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'];   %path for parameters sheet
  %   data_path=[opscea_path 'OPSCEADATA/'];   %path for OPSCEA ICEEG and imaging data
@@ -55,7 +60,7 @@ if to_plot
      % for speed, these are filled during first frame of surfslice then re-used
       global loaf; 
       global sliceinfo; 
-      global I;
+      % global I;
     
     
     %% Import parameters
@@ -148,7 +153,7 @@ if to_plot
     % end of edit -NS
     if size(d,1)>size(d,2); d=d'; end % orient to channels by samples
     [~,ntp]=size(d); f=1;  %EDITED JK 5/4
-    disp(['Length of data to play for video is ' num2str(round(ntp/sfx)) 'sec'])
+    % disp(['Length of data to play for video is ' num2str(round(ntp/sfx)) 'sec'])
     
     % error checks for selected time periods
     if any([S.VIDperiod(1) S.BLperiod(1)]<0)
@@ -162,22 +167,23 @@ if to_plot
         load([ptpath 'Imaging/Elecs/Electrodefile.mat']); 
     elseif exist([ptpath 'Imaging/elecs/clinical_elecs_all.mat']) % access variables in old format NS
          load([ptpath 'Imaging/elecs/clinical_elecs_all.mat']); % NS
-    end;
-    if ~exist('anatomy','var'); 
+    end
+    if ~exist('anatomy','var') 
         anatomy=cell(size(elecmatrix,1),4); 
     end
-    if size(anatomy,1)>size(elecmatrix,1); 
+    if size(anatomy,1)>size(elecmatrix,1) 
         anatomy(size(elecmatrix,1)+1:end,:)=[]; 
     end
     anat=anatomy; 
     clear anatomy; 
-    if size(anat,2)>size(anat,1); 
+    if size(anat,2)>size(anat,1)
         anat=anat'; 
     end
-    if size(anat,2)==1; 
+    if size(anat,2)==1
         anat(:,2)=anat(:,1); 
-    end; 
-    if ~exist('eleclabels','var'); 
+    end
+
+    if ~exist('eleclabels','var')
         eleclabels=anat(:,1); 
     end
    em=elecmatrix; 
@@ -213,7 +219,9 @@ if to_plot
     
     %% formatting checks, and consolidation of bad channels
     ns=unique( [find(badch);   find(isnan(mean(em,2)));   find(isnan(mean(d,2)))]  ); % bad channels: those that are pre-marked, or if NaNs in their coordinates or ICEEG data traces
-    nns=true(nch,1); nns(ns)=0; %nns=find(nns); %consolidate bad channels and those with NaNs
+    nns=true(nch,1); 
+    nns(ns)=0; %nns=find(nns); %consolidate bad channels and those with NaNs
+    
     %remove data channels previously clipped at end. Only include that which has electrode coordinates (intracranial)
     if size(em,1)>size(d,1); nch=size(em,1); d(nch+1:end,:)=[]; LL(nch+1:end,:)=[]; nns(nch+1:end)=[]; ns(ns>size(em,1))=[]; 
        fprintf(2, 'ALERT: Clipping off extra bad channel entries (make sure you have the right ICEEG and bad channel files loaded)\n');
@@ -279,31 +287,29 @@ if to_plot
     
     chanorder=1:size(d(nns,:),1); if ~showlabels; chanorder=randperm(size(d(nns,:),1)); end % if desired, blinds user by randomizing channel order
     figure('color','w','Position',[1 5 1280 700]); 
-    frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
+    % frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
     for i = jumpto
-%     for i=frametimpoints; 
-        if i==jumpto+2*S.fram; timerem_sec=toc*length(frametimpoints); disp(['Length of data is ' num2str(ntp/sfx) 'sec']); disp(datetime); 
-            disp([' -- VIDEO ETA: ' num2str(floor(timerem_sec/3600)) 'h ' num2str(ceil(mod(timerem_sec,3600)/60)) 'm -- ']); 
-            fprintf('Will be done at approx: '); disp(datetime( clock, 'InputFormat', 'HH:mm:ss' ) + seconds(timerem_sec))
-        end; tic 
-%         isfirstframe = i==jumpto; 
         subplot(1,1,1); %clears all axes, to start fresh each frame
-        w8s=LL(:,i); w8s(~nns)=0; %make weights for electrodes, and set NaNs (bad channels) to zero
-        for j=1:size(plt,1);
+        w8s=LL(:,i); 
+        w8s(~nns)=0; %make weights for electrodes, and set NaNs (bad channels) to zero
+        for j=1:size(plt,1)
             subplot(subplotrow(j),subplotcolumn(j),subplotnum{j}); %to do: MAKE ONLY ONE BRAIN/SUBPLOT (keeping zLL plot and iceeg plot)
         switch upper(plottype{j,1})
           case 'ECOG' %plot the raw data
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
                %subplot(1,400,[330:350]) 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                dtoplot=d(nns,(i-S.marg+1):(i-S.marg+1)+sfx*S.iceegwin);
-                tstoplot=ts((i-S.marg+1):(i-S.marg+1)+sfx*S.iceegwin);
+                dtoplot=d(nns,((i-S.marg+1):(i-S.marg+1)+sfx*S.iceegwin))-1;
+                tstoplot=ts((i-S.marg+1):(i-S.marg+1)+sfx*S.iceegwin)-1;
+                % dtoplot=d(nns,(i-S.marg):(i-S.marg)+sfx*S.iceegwin);
+                % tstoplot=ts((i-S.marg):(i-S.marg)+sfx*S.iceegwin);
+
                 shift = repmat(-1*(1:nch)',1,size(dtoplot,2)); 
                 plot(tstoplot,dtoplot*scl+shift,'k');
                   ylim([-nch-1 0])
                   axis tight; xlabel('time (sec)')
                   hold on;
-                fill(ones(1,4)*ts(i)+[0 S.llw S.llw 0],[.5 .5 -nch-1.25 -nch-1.25],[.75 0 .75],'facealpha',.25,'edgealpha',1); hold off; % overlay transform window
+                fill((ones(1,4)*ts(i)+[0 S.llw S.llw 0])-1,[.5 .5 -nch-1.25 -nch-1.25],[.75 0 .75],'facealpha',.25,'edgealpha',1); hold off; % overlay transform window
                   xlabel('Time (seconds)'); 
                   textfactor=min([ceil((length(find(nns))-80)/20) 4]); %scale text size
                   if showlabels; set(gca,'ytick',-length(ytl):-1,'yticklabel',flipud(ytl(chanorder)),'fontsize',8-textfactor); else; set(gca,'ytick',[]); ylabel('Channels (randomized order)'); end
@@ -314,54 +320,42 @@ if to_plot
               hold on;           
               plot([to_plot to_plot],ylim,'m-') % vertical magenta line that follows time
     
-                %Clear non-labeled channels beyond size of number of electrode rows
-                %Vectorize unwanted channels 
-                noneed=false(size(anat,1),4);
-                anat_rows = size(anat,1); 
-                badch = badch(1:anat_rows); % cut down badch to eliminate extra bad channels after anatomy rows size
-                for num_rows=1:size(anat,1)
+            %Clear non-labeled channels beyond size of number of electrode rows
+            %Vectorize unwanted channels 
+              noneed=false(size(anat,1),4);
+              anat_rows = size(anat,1); 
+              badch = badch(1:anat_rows); % cut down badch to eliminate extra bad channels after anatomy rows size
+              for num_rows=1:size(anat,1)
                   noneed(num_rows,1) = contains(lower(anat{num_rows,4}),'ctx'); % cell array containing row index of strings with "ctx" in u1
                   noneed(num_rows,2) = contains(lower(anat{num_rows,4}),'wm'); % cell array containing row index of strings with "wm" in u1
                   noneed(num_rows,3) = contains(lower(anat{num_rows,4}),'white-matter'); % cell array containing row index of strings with "Right-Cerebral-White-Matter" in u1             
                   noneed(num_rows,4) = contains(lower(anat{num_rows,4}),'unknown'); % cell array containing row index of strings with "Unknown" in u1
                   noneed(num_rows,5) = contains(lower(anat{num_rows,4}),'vent'); % cell array containing row index of strings with "Unknown" in u1             
-                end
-                noneed=any(noneed,2);
-        
-                noneed = noneed | badch; % now is either uncessary (noneed) or bad channels
-        
+              end
+              noneed=any(noneed,2);
     
-                new_LL=LL; %do not clear LL, used to construct w8s
-                new_LL(noneed,:)=[];
+              noneed = noneed | badch; % now is either uncessary (noneed) or bad channels
     
-                new_anat=anat; %do not clear anat, used to construct noneed 
-                new_anat(noneed,:)=[];
-    
-                new_em=em; %do not clear anat, used to construct noneed 
-                new_em(noneed,:)=[];
-    
-    
-                new_w8s = w8s;
-                new_w8s(noneed,:) = [];
-    
-     
-    
-              perdur=10;
-    
-    
+
+              new_LL=LL; %do not clear LL, used to construct w8s
+              new_LL(noneed,:)=[];
+
+              new_anat=anat; %do not clear anat, used to construct noneed 
+              new_anat(noneed,:)=[];
+
+              new_em=em; %do not clear anat, used to construct noneed 
+              new_em(noneed,:)=[];
+
+
+              new_w8s = w8s;
+              new_w8s(noneed,:) = [];
               subplot(2,100,62:100)
-              [si]=LL_plot(new_anat,new_LL,ts,jumpto,plot_start,plot_end,sfx,data_path,S.cax);
-    %           LL_plot(new_anat,new_LL,ts,S,SEMperiod)
-%               clear h; %replot red line (delete or clear
-              % ?)
-    %           h=plot([ts(i) ts(i)],ylim,'r-'); 
-              yline(to_plot,'m-'); %plots red line at onset of specified symptom on zLL graph
-    
-    
+              [si]=LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,S.cax);
+
+             
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
           case 'COLORBAR' 
-                    cd(data_path)
                     colormap_ns(gca,S.cm(ceil(size(S.cm,1)/2):end,:)); %Z-scores above baseline
                     hold off; plot(1,1); title(''); axis off; 
                     cb=colorbar; cb.Ticks=[0 1]; cb.Limits=[0 1]; cb.TickLabels={0,num2str(S.cax(2))}; cb.FontSize=11; cb.Location='west'; 
@@ -371,7 +365,10 @@ if to_plot
               if matches(surfaces{j},'rcortex')
                   hold off; srf=regexp(surfaces{j},',','split'); % list the specific surfaces wanted for this subplot
                   srfalpha=regexp(surfacesopacity{j},',','split'); % list their corresponding opacities (values from 0 to 1; 0=invisible, 1=opaque)
-                  if length(srf)~=length(srfalpha); msgbox('Number of surface to plot does not match number of alpha designations, check excel sheet'); return; end
+                  if length(srf)~=length(srfalpha); 
+                      msgbox('Number of surface to plot does not match number of alpha designations, check excel sheet'); 
+                      return; 
+                  end
                   acceptedterms={'rcortex','lcortex','rhipp','lhipp','ramyg','lamyg','wholebrain'};
                     for s=1:length(srf)
                         srf{s}=lower(srf{s}); %convert to lower case for easier string matching
@@ -384,97 +381,45 @@ if to_plot
                             case 'ramyg';   srfplot=Ramyg; 
                             case 'lamyg';   srfplot=Lamyg; 
                         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % NS needs to debug
-        %               else
-        %                   disp(['ATTN: Row ' num2str(j) ' defined as surface but does not contain an accepted mesh term']); disp(acceptedterms); error('');
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
                       end
+
                       % plot the individual heatmapped surface
-                      if exist('srfplot','var'); hh=ctmr_gauss_plot_edited(srfplot,new_em,new_w8s,S.cax,0,S.cm,S.gsp); 
-                                                 alpha(hh,str2double(srfalpha{s})); % Adjust opacity specified for that row
-                      else; disp(['ALERT: One of the entries in row ' num2str(j) ' is not a valid entry, accepts:']); disp(acceptedterms); 
+                      cd(opscea_path)
+                      if exist('srfplot','var') 
+                          hh=ctmr_gauss_plot_edited(srfplot,new_em,new_w8s,S.cax,0,S.cm,S.gsp); 
+                          alpha(hh,str2double(srfalpha{s})); % Adjust opacity specified for that row
+                      else 
+                          disp(['ALERT: One of the entries in row ' num2str(j) ' is not a valid entry, accepts:']); disp(acceptedterms); 
                       end
                     end
-                        if isempty(intersect(srf{s},{'rcortex','lcortex'}))||strcmpi(srf,'wholebrain') %for glass brain (hipp and/or amyg only) and wholebrain plots
-                            glass1=ctmr_gauss_plot_edited(Rcrtx,new_em,new_w8s,S.cax,0,S.cm,S.gsp); alpha(glass1,.1); 
-                            glass2=ctmr_gauss_plot_edited(Lcrtx,new_em,new_w8s,S.cax,0,S.cm,S.gsp); alpha(glass2,.1); 
-    %                         plot3(new_em(depthch,1),new_em(depthch,2),new_em(depthch,3),'k.','markersize',10-5*(1/nch*10))
-                            if ~pltshowplanes(j); plot3(new_em(:,1),new_em(:,2),new_em(:,3),'k.','markersize',10-5*(1/nch*10)); end 
-        %                 else plot3(new_em(nns,1),new_em(nns,2),new_em(nns,3),'k.','markersize',10-5*(1/nch*10)) %plot electrodes
-                        end
-                        cameratoolbar('setmode',''); 
-                        litebrain(viewangle{j},.9); 
-                        wb=strcmpi(srf,'wholebrain'); if any(wb); alpha(glass1,srfalpha{wb}); alpha(glass2,srfalpha{wb}); end
-                        if strcmp(viewangle{j},'i'); view(90+isL*180,270); end
-                        if pltshowplanes(j)||(strcmp(viewangle{j},'i')&&~isempty(intersect(srf,'wholebrain'))); view(180,270); end %orients the "show planes" slice to a classic axial perspective
-                        axis(axislim); if strcmpi(viewangle{j},'i')||strcmpi(viewangle{j},'s')||strcmpi(viewangle{j},'a')||strcmpi(viewangle{j},'p');  if ~strcmpi(pt,'NO181'); axis([axislim(1)*isL+10*isR axislim(2)*isR+10*isL  axislim(3:6)]); end; end
-                        zoom(pltzoom(j)); 
-                        hold on; colormap_ns(gca,S.cm); set(gca,'Clipping','off')
-                        clear srfplot
+                    if isempty(intersect(srf{s},{'rcortex','lcortex'}))||strcmpi(srf,'wholebrain') %for glass brain (hipp and/or amyg only) and wholebrain plots
+                        glass1=ctmr_gauss_plot_edited(Rcrtx,new_em,new_w8s,S.cax,0,S.cm,S.gsp); alpha(glass1,.1); 
+                        glass2=ctmr_gauss_plot_edited(Lcrtx,new_em,new_w8s,S.cax,0,S.cm,S.gsp); alpha(glass2,.1); 
+                        if ~pltshowplanes(j) 
+                            plot3(new_em(:,1),new_em(:,2),new_em(:,3),'o','Color','k','MarkerFaceColor','k','markersize',2.5); 
+                        end 
+    %                 else plot3(new_em(nns,1),new_em(nns,2),new_em(nns,3),'k.','markersize',10-5*(1/nch*10)) %plot electrodes
+                    end
+                    cameratoolbar('setmode',''); 
+                    litebrain(viewangle{j},.9); 
+                    wb=strcmpi(srf,'wholebrain'); 
+                    if any(wb) 
+                        alpha(glass1,srfalpha{wb}); 
+                        alpha(glass2,srfalpha{wb}); 
+                    end
+                    if strcmp(viewangle{j},'i')
+                        view(90+isL*180,270)
+                    end
+                    if pltshowplanes(j)||(strcmp(viewangle{j},'i')&&~isempty(intersect(srf,'wholebrain'))); view(180,270); end %orients the "show planes" slice to a classic axial perspective
+                    axis(axislim); 
+                    if strcmpi(viewangle{j},'i')||strcmpi(viewangle{j},'s')||strcmpi(viewangle{j},'a')||strcmpi(viewangle{j},'p');  if ~strcmpi(pt,'NO181'); axis([axislim(1)*isL+10*isR axislim(2)*isR+10*isL  axislim(3:6)]); end; end
+                    zoom(pltzoom(j)); 
+                    hold on;                         
+                    cd(opscea_path)
+                    colormap_ns(gca,S.cm); set(gca,'Clipping','off')
+                    clear srfplot
               end
-%           case 'DEPTH' %plot depth electrode with parallel slice (plus surface behind it)
-%             eN=depths{j}; [eNID,~,~]=intersect(find(nns),eN); %Get the specific channels for this depth, ignoring bad channels
-%             if      isempty(eNID); axis off; if isfirstframe; drows(drows==j)=[]; end
-%             elseif ~isempty(eNID); I.new_em=new_em; I.new_w8s=new_w8s; I.nns=nns; sliceinfo(j).depthlabels=depthlabels{j}; 
-%               OPSCEAsurfslice(pt,S.sliceplane,new_em(eNID,:),new_w8s(eNID),data_path,[],S.cax,S.cm,S.gsp,j,isfirstframe)
-%               plot3(new_em(eNID,1),new_em(eNID,2)+((S.sliceplane=='c')),new_em(eNID,3),'k-'); % depth probe (line between electrodes)
-%               plot3(new_em(eNID,1),new_em(eNID,2)+((S.sliceplane=='c')),new_em(eNID,3),'k.','markersize',10); % depth electrodes (dots)
-%               cameratoolbar('setmode','')
-%               axis off; axis equal; 
-%               hold off; 
-%               
-%               %add light sources and set camera view
-%                 delete(findall(gca,'type','light')); 
-%                 view(sliceinfo(j).azel); %head-on angle for camlight reference
-%                 camlight(0,30) %camlight at head-on angle and 25 degrees above azimuth (otherwise light reflects and will obscure cam view)
-%                 
-%                 if isfirstframe; hold on; % add color-coded planes parallel to slice, to highlight the plane of view during initial rotation below
-%                     fill3(sliceinfo(j).corners(1,:),sliceinfo(j).corners(2,:)+.1,sliceinfo(j).corners(3,:),depthcolor{j},'edgecolor',depthcolor{j},'facealpha',0,'edgealpha',.5,'linewidth',3); hold off; 
-%                 end
-%                 
-%               for showp=find(pltshowplanes) % now add color-coded slices planes on any subplot(s) where you indicated showplanes=1
-%                   if ~isempty(showp); subplot(subplotrow(showp),subplotcolumn(showp),subplotnum{showp}); 
-%                   fill3(sliceinfo(j).corners(1,:),sliceinfo(j).corners(2,:),sliceinfo(j).corners(3,:),depthcolor{j},'edgecolor',depthcolor{j},'facealpha',.1,'edgealpha',.5,'linewidth',3)
-%                         subplot(subplotrow(j),subplotcolumn(j),subplotnum{j}) %switch back to the slice subplot at hand
-%                   end
-%               end
-%               axis(axislim); zoom(pltzoom(j)); % apply the specified zoom for that this view (usually similar for all depths but can depend on angle of slice, position of electrodes, etc)
-%               
-%               if showlabels; ttl=depthlabels{j}; else ttl=['Depth ' num2str(j-(find(isdepth==1,1)-1))]; end
-%               ttloffset=-1; % vertical offset of title from bottom of axis, in millimeters
-%               text(mean(sliceinfo(j).corners(1,:)),mean(sliceinfo(j).corners(2,:)),axislim(5)+ttloffset,ttl,'HorizontalAlignment','center','VerticalAlignment','top','color',depthcolor{j},'fontweight','bold','fontsize',14) 
-%               
-%               colormap(gca,S.cm)
-    
             end
-        end; pause(.5) 
-        end
-        
-        %rotation (first few frames of movie) to help user orientation: start
-        %all slices from inferior view and rotate slowly to usual head-on view
-%         if isfirstframe; numrotationframes=15; 
-%           if ~isempty(drows)
-%             for dpth=drows
-%                 sliceinfo(dpth).azelorient=[linspace(sign(sliceinfo(dpth).azel(1))*180,sliceinfo(dpth).azel(1),numrotationframes); 
-%                     linspace(-90,sliceinfo(dpth).azel(2),numrotationframes)]; 
-%             end
-%             for rf=1:numrotationframes; for dpth=drows; subplot(subplotrow(dpth),subplotcolumn(dpth),subplotnum{dpth}); view(sliceinfo(dpth).azelorient(1,rf),sliceinfo(dpth).azelorient(2,rf)); if rf==1; litebrain('i',.5); end; end; pause(.25)
-%                F(f)=getframe(gcf); f=f+1; 
-%             end
-%           end
-%         end
-        
-        % Save frame into an ongoing sequential structure
-        F(f)=getframe(gcf); f=f+1; fprintf('Saved frame - '); toc
-    
-    
-    cd(szpath) % Save video in the same data folder for that seizure
-    % if showlabels; vidfilename=[ptsz '_video']; else vidfilename=[num2str(str2num(pt(3:end))*11) '_' sz]; end
-    % v=VideoWriter(vidfilename,'MPEG-4'); 
-    % v.FrameRate = 15; 
-    % open(v); 
-    % writeVideo(v,F); 
-    % close(v); 
+        end  
+     end
 end    

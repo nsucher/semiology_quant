@@ -1,4 +1,4 @@
-function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,ts_sx,to_plot,opscea_path,data_path)
+function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,yes_plot,to_plot,opscea_path,data_path)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
@@ -6,7 +6,7 @@ function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,ts_sx,to_p
 % the first symptom onset to analyze
 % to_plot is whether or not to run the function
 
-if to_plot
+if yes_plot
     % 1. Load data and find number of columns
     if ~exist(data_path,'dir'); error('Directory for your data needs to be corrected'); end
 
@@ -147,10 +147,12 @@ if to_plot
     sem_end = round(max([last_auto(last_auto > 0) last_tonic(last_tonic>0) last_clonic(last_clonic>0)])*.2);
 
     m=clean_mat(:,bin_any~=0)'; 
-    semts=linspace(1,t_sec,rows);
+    semts=linspace(1,t_sec,rows); %t
+    y = 1:size(m,1)
 
     figure('Color','w','Name',['Semiology: ' pt '_' sz])
-    imagesc(semts,1:size(m,1),m)
+    imagesc(semts,y,m)
+    % pcolorjk(m)
 
     hold on;
     plot_start = sem_start-(perdur*3);
@@ -166,9 +168,7 @@ if to_plot
 
     y_ticks = 1:length(find(bin_any~=0));
 
-    set(gca,'ytick',y_ticks,'CLimMode', 'manual', 'CLim', [0 5],'FontSize',12);
-    set(gca,'YAxisLocation','right')
-
+    set(gca,'ytick',y_ticks,'CLimMode', 'manual', 'CLim', [0 5],'FontSize',12,'YAxisLocation','right');
 
     y_labels = y_label_names(bin_any~=0);
     yticklabels('manual'); %remove 
@@ -177,14 +177,15 @@ if to_plot
 
     set(gca,'YAxisLocation','right')
 
-    xline([1.5:1:max(get(gca,'ytick'))],'k-',2.5)
+    % y line symptom separation
+    for yl = 1.5:1:max(get(gca,'ytick'))
+        line(xlim,[yl yl],'Color','k','LineWidth',2.5)
+    end
+
+    % x line grids    
     iter = 7.5; %for wide plot
-
-    yline([min(xlim):iter:max(xlim)],'k-',.01)
-
-
-    max(get(gca,'YTick'));
-
-    yline(ts_sx,'m-',2) % vertical red line that follows time
+    for xl = plot_start:iter:plot_end
+        line([xl xl],ylim,'Color','k','LineWidth',.01)
+    end
 
 end

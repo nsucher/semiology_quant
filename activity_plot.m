@@ -160,6 +160,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
                             end
                           end 
                         end
+                cd(opscea_path)
                 if length(sz_nns) <= length(szxyz)
                     hh=ctmr_gauss_plot_edited(srfplot,szxyz(sz_nns,:),sz_w8s(sz_nns),cax,0,cmocean('balance'),params_gsp); 
                 else 
@@ -177,7 +178,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
     
             for i_row=1:size(szxyz(:,1))
-                plot3(szxyz(i_row,1),szxyz(i_row,2),szxyz(i_row,3),'k.','markersize',15); 
+                plot3(szxyz(i_row,1),szxyz(i_row,2),szxyz(i_row,3),'o','Color','k','MarkerFaceColor','k','MarkerSize',2.5); 
             end 
             
 
@@ -218,7 +219,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
                 for w8 = 1:length(w8s_plot{n})       %plot individual electrodes (w8) per neurosemiology (u)
                     plot(w8s_plot{n}{w8},n*ones(length(w8s_plot{n}),1),mrkr(n,1:2)) % plot LL meandiff of each electrode
                 end
-                xline(n,'G:',.25); % horizontal lines marking neuroanatomy
+                yline(n,':','LineWidth',.25,'Color',[.75,.75,.75]); % horizontal lines marking neuroanatomy
             end
 
             yticks(1:length(reg_plot))
@@ -226,17 +227,15 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
             ylim([min(ylim)-1 max(ylim)+1]);
 
-            yline(0,'k-'); % vertical line at x = 0 separating positive or negative activity
+            xline(0,'k-'); % vertical line at x = 0 separating positive or negative activity
 
             set(gca,'FontSize',12)
             alpha(1)
         end
     else
         w8_cell = {};
-        anat_cell = {};
         sz_nns = 0;
         szxyz=[];
-        loaf = [];
         sz_w8s = [];
 
     end

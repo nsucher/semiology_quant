@@ -204,11 +204,21 @@ end
 
 close all 
 
-% PAPER: FIGURE __ / POSTER: APPROACH 3
+mp_count = 0;
+
 for minnumpts = 1:min_pt
+    mp_count = mp_count + 1;
     cd(opscea_path)
+    
+    % PAPER: FIGURE __ / POSTER: APPROACH 3
     bin_bilat %pixel plot of collapsed bilateral hemisphere 
+
+    % PAPER: FIGURE __/ POSTER: APPROACH 2 FIGURES VERTEX BY VERTEX
+    % max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on right hemisphere of brain
+    % max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on left hemisphere of brain
+
 end
+delete mp_count
 
 cd(opscea_path)
 
@@ -219,9 +229,5 @@ pv_all_brain(sx_input,lat_sxmx,num_ptsz,num_elecs,min_elec,min_pt,opscea_path,da
 %OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
 sx_sec = first_sx_vec/5;
 
-%UNCOMMENT THIS FOR APPROACH 2 FIGURES VERTEX BY VERTEX
-
-%max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,min_pt,opscea_path,data_path) %vertex heatmap on right hemisphere of brain
-% % 
-% max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path) %vertex heatmap on left hemisphere of brain
 % 
+k=2;

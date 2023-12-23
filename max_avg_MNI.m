@@ -1,4 +1,4 @@
-function max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,npt,hem,dst_radius,minnumpts,opscea_path,data_path)
+function max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,npt,hem,dst_radius,minnumpts,opscea_path,data_path,mp_count)
 
 
 % This is all in MNI coordinates (MNI mesh for vertices, and the MNI warped electrodes, which we can call clinical_elecs_all_warped.mat file)
@@ -62,62 +62,60 @@ nptPositive=sum(max_w8s_rad>0,2);
 % pink_lemonade = colormap(flipud(colormap(spring)));
 % pink_lemonade = colormap(spring);
 
-% cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
-% cm_percent = cm_percent(20:120,:);
+cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
+cm_percent = cm_percent(20:120,:);
 % 
-% percentPositive= round(nptPositive./nptAtVerts * length(cm_percent)); 
+percentPositive= round(nptPositive./nptAtVerts * length(cm_percent)); 
 
 % percentPositive= round(nptPositive./nptAtVerts * length(pink_lemonade)); 
 
 
 % % PINK LEMONADE BRAIN OF % OF PATIENTS WITH POSITIVE ACTIVITY
 % % 
-% figure('color','w','position',[230 171 1440 796]);
-% getbrain4_ns('MNI','',1,0,hem) %plot empty brain
-% shading interp
-% axis equal; axis off; set(gca,'clipping','off'); lightsout; litebrain(hem,.75)
-% hold on
-% 
-% pause(1)
-% 
-% 
-% for v_m = 1:nvert %for this specific vertex
-%     if nptAtVerts(v_m)>=minnumpts %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
-%         if percentPositive(v_m) == 0
-%             percentPositive(v_m) = 1;
-%         end
-% %         plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color',pink_lemonade(percentPositive(v_m),:),'markersize',15); %black = 0% of patients had positive activity; red = 100% of patients had positive activity
-%         plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color',cm_percent(percentPositive(v_m),:),'markersize',15); %black = 0% of patients had positive activity; red = 100% of patients had positive activity
-%         disp([num2str(round(v_m/nvert*100,2)) '%'])
-%     end
-% end
-
-
-
-
-%  BRAIN OF NUMBER OF PATIENTS NEAR EACH ELECTRODEE
-
-
-figure('color','w','position',[230 171 1440 796]);
-
-cm_npt = cbrewer2('Purples',7,'seq');
-
-
+figure('color','w','position',[230 171 1440 796],'Name',[num2str(minnumpts), ' patients - significant positive activity change']);
 getbrain4_ns('MNI','',1,0,hem,opscea_path,data_path) %plot empty brain
 shading interp
-axis equal; axis off; set(gca,'clipping','off'); lightsout; 
-litebrain(hem,.75)
+axis equal; axis off; set(gca,'clipping','off'); lightsout; litebrain(hem,.75)
 hold on
 
+pause(1)
+
+
 for v_m = 1:nvert %for this specific vertex
-%    if nptAtVerts(v_m)>=minnumpts %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
-    if nptAtVerts(v_m)>=1 %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
-        plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color', cm_npt(nptAtVerts(v_m),:),'markersize',15); %pink lemonade plot of number of patients with vertices dst_radius away from electrodes
+    if nptAtVerts(v_m)>=minnumpts %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
+        if percentPositive(v_m) == 0
+            percentPositive(v_m) = 1;
+        end
+%         plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'.','color',pink_lemonade(percentPositive(v_m),:),'markersize',15); %black = 0% of patients had positive activity; red = 100% of patients had positive activity
+        plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'o','color',cm_percent(percentPositive(v_m),:),'MarkerFaceColor',cm_percent(percentPositive(v_m),:),'MarkerSize',2.5); %black = 0% of patients had positive activity; red = 100% of patients had positive activity
         disp([num2str(round(v_m/nvert*100,2)) '%'])
     end
 end
 
-return
+
+
+
+%  BRAIN OF NUMBER OF PATIENTS NEAR EACH ELECTRODE
+
+if mp_count == 1
+    figure('color','w','position',[230 171 1440 796]);
+    cm_npt = cbrewer2('Purples',7,'seq');
+    
+    
+    getbrain4_ns('MNI','',1,0,hem,opscea_path,data_path) %plot empty brain
+    shading interp
+    axis equal; axis off; set(gca,'clipping','off'); lightsout; 
+    litebrain(hem,.75)
+    hold on
+    
+    for v_m = 1:nvert %for this specific vertex
+    %    if nptAtVerts(v_m)>=minnumpts %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
+        if nptAtVerts(v_m)>=1 %if there are at least minnumpts number of patients with electrodes dst_radius away from the vertex
+            plot3(mni_h(v_m,1),mni_h(v_m,2),mni_h(v_m,3),'o','color', cm_npt(nptAtVerts(v_m),:),'MarkerFaceColor',cm_npt(nptAtVerts(v_m),:),'markersize',2.5); %pink lemonade plot of number of patients with vertices dst_radius away from electrodes
+            disp([num2str(round(v_m/nvert*100,2)) '%'])
+        end
+    end
+end
 
 cd(opscea_path) %place so you don't have to change paths every time you run the code
 
