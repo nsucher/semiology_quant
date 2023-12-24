@@ -40,8 +40,8 @@ to_plot = sx_sec(1);
 
 % SYMPTOM INDEX AS TIME SERIES (MONDRIAN PLOT)
 yes_plot = 1; %1 = plot it, 0 = don't plot
-[sem_start,plot_start,plot_end] = mondrian_plot(uber_pt,uber_sz,perdur_input,yes_plot,to_plot,opscea_path,data_path);
+[sem_start,plot_start,plot_end] = mondrian_plot(uber_pt,uber_sz,perdur_input,yes_plot,opscea_path,data_path);
 
 
 % OPSCEA ICEEG, LINE LENGTH TRANSFORM AS PLOT AND 3D BRAIN HEATMAP
-OPSCEA_sem_LL(uber_pt,uber_sz,1,to_plot,to_plot,110,250,opscea_path,data_path) 
+OPSCEA_sem_LL(uber_pt,uber_sz,1,to_plot,to_plot,plot_start,plot_end,opscea_path,data_path) 
