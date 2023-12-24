@@ -305,7 +305,7 @@ if to_plot
                 % tstoplot=ts((i-S.marg):(i-S.marg)+sfx*S.iceegwin);
 
                 shift = repmat(-1*(1:nch)',1,size(dtoplot,2)); 
-                plot(tstoplot,dtoplot*scl+shift,'k');
+                plot(tstoplot,dtoplot*scl+shift,'k','LineWidth',.000001);
                   ylim([-nch-1 0])
                   axis tight; xlabel('time (sec)')
                   hold on;
@@ -389,7 +389,8 @@ if to_plot
                           hh=ctmr_gauss_plot_edited(srfplot,new_em,new_w8s,S.cax,0,S.cm,S.gsp); 
                           alpha(hh,str2double(srfalpha{s})); % Adjust opacity specified for that row
                       else 
-                          disp(['ALERT: One of the entries in row ' num2str(j) ' is not a valid entry, accepts:']); disp(acceptedterms); 
+                          disp(['ALERT: One of the entries in row ' num2str(j) ' is not a valid entry, accepts:']); 
+                          disp(acceptedterms); 
                       end
                     end
                     if isempty(intersect(srf{s},{'rcortex','lcortex'}))||strcmpi(srf,'wholebrain') %for glass brain (hipp and/or amyg only) and wholebrain plots
@@ -398,7 +399,9 @@ if to_plot
                         if ~pltshowplanes(j) 
                             plot3(new_em(:,1),new_em(:,2),new_em(:,3),'o','Color','k','MarkerFaceColor','k','markersize',2.5); 
                         end 
-    %                 else plot3(new_em(nns,1),new_em(nns,2),new_em(nns,3),'k.','markersize',10-5*(1/nch*10)) %plot electrodes
+                    else 
+                        % plot3(new_em(nns,1),new_em(nns,2),new_em(nns,3),'k.','markersize',10-5*(1/nch*10)); %plot electrodes
+                        plot3(new_em(:,1),new_em(:,2),new_em(:,3),'o','Color','k','MarkerFaceColor','k','markersize',2.5); %plot electrodes
                     end
                     cameratoolbar('setmode',''); 
                     litebrain(viewangle{j},.9); 
