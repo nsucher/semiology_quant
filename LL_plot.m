@@ -1,4 +1,4 @@
-function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,cax)
+function LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,cax)
 %     Created by Natalia Sucher and Jon Kleen May 10 2022, Updated May 26
 %     2022 by NS
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        %Electrode Activity
@@ -72,7 +72,6 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,to_plot,plo
            avg_yt_LL = nan(1,label_row);
 
 
-
            for i = 2:length(u2_s) + 1
                if i < length(u2_s)+1
                     avg_yt_LL(i-1) = u2_s(i-1) + (u2_s(i) - u2_s(i-1))/2; 
@@ -81,11 +80,6 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,to_plot,plo
                end
            end 
 
-
-
-                               
-
-           
            % variables for y axis 
            ytl_LL = abv_u1; %ytick labels for LL_s plot                    
            yt_LL = avg_yt_LL; %yticks for LL_s plot 
@@ -106,8 +100,9 @@ function [si,LL_s,ytl_LL,yt_LL,u2_s,u3_s]=LL_plot(new_anat,new_LL,ts,to_plot,plo
 
 
            title('Line Length')
-           tx=diff(xlim);
+           % tx=diff(xlim);
            caxis(cax); %modulate saturation depending on OPSCEAparams color axis
+
 
            hold on; plot(xlim,[u2_s u2_s],'w-'); %white horizontal lines separating brain regions
            plot([to_plot to_plot],ylim,'m-') % vertical magenta line at specified symptom onset

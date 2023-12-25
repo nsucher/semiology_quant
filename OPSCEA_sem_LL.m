@@ -39,9 +39,9 @@ if sx_plot
         showlabels=true; 
     end %default displays ICEEG and depth labels
 
-    if ~exist('jumpto','var')||isempty(sx_plot); 
-        sx_plot=0; 
-    end 
+    % if ~exist('jumpto','var')||isempty(sx_plot); 
+    %     sx_plot=0; 
+    % end 
     
  %   opscea_path=['/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'];   %path for parameters sheet
  %   data_path=[opscea_path 'OPSCEADATA/'];   %path for OPSCEA ICEEG and imaging data
@@ -313,9 +313,10 @@ if sx_plot
     chanorder=1:size(d(nns,:),1); if ~showlabels; chanorder=randperm(size(d(nns,:),1)); end % if desired, blinds user by randomizing channel order
     figure('color','w','Position',[1 5 1280 700]); 
     % frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
-    for i = sx_plot
+    round_sx_plot = floor(sx_plot);
+    for i = round_sx_plot
         subplot(1,1,1); %clears all axes, to start fresh each frame
-        w8s=LL(:,double(i)); 
+        w8s=LL(:,i); 
         w8s(~nns)=0; %make weights for electrodes, and set NaNs (bad channels) to zero
         for j=1:size(plt,1)
             subplot(subplotrow(j),subplotcolumn(j),subplotnum{j}); %to do: MAKE ONLY ONE BRAIN/SUBPLOT (keeping zLL plot and iceeg plot)
@@ -343,8 +344,8 @@ if sx_plot
                   ttl1=title('ICEEG'); set(ttl1,'fontsize',10)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
               hold on;           
-              plot([sx_plot sx_plot],ylim,'m-') % vertical magenta line that follows time
-    
+              % plot([sx_plot sx_plot],ylim,'m-') % vertical magenta line that follows time
+              % hold on;
             %Clear non-labeled channels beyond size of number of electrode rows
             %Vectorize unwanted channels 
               noneed=false(size(anat,1),4);
@@ -375,7 +376,7 @@ if sx_plot
               new_w8s = w8s;
               new_w8s(noneed,:) = [];
               subplot(2,100,62:100)
-              [si]=LL_plot(new_anat,new_LL,ts,sx_plot,plot_start,plot_end,sfx,S.cax);
+              LL_plot(new_anat,new_LL,ts,sx_plot,plot_start,plot_end,sfx,S.cax);
 
              
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -10,7 +10,6 @@ function [mesh_handle,mesh]=highlightbrain(pt,ROI,colr,edgeface,plotbrain,newfig
 
 if strcmpi(pt,'MNI'); 
     pt='cvs_avg35_inMNI152';
-    disp('it really is mni!')
 end
 % if any(strcmp(pt,{'EC129','EC137'})); hemi='rh'; else hemi='lh'; end
 if nargin<=2; colr='g'; end

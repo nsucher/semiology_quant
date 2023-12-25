@@ -68,7 +68,11 @@ pcolor(Mptsig');
 axis equal; axis off; 
 % colormap(ax3,raspberry)
 % figure('color','w')
-cm_sig = cbrewer2('PuRd',7,'seq');
+% cm_sig = cbrewer2('PuRd',7,'seq');
+
+cm_sig = cbrewer2_ns('PuRd',7,'seq');
+
+
 cm_sig = [.85 .85 .85; cm_sig];
 colormap(ax3,cm_sig)
 % colorbar

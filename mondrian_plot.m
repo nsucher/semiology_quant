@@ -185,7 +185,7 @@ if yes_plot
     % start and stop from symptom onset and end
     sem_start = round(min([first_auto(first_auto > 0) first_tonic(first_tonic>0) first_clonic(first_clonic>0)])*.2);
     sem_end = round(max([last_auto(last_auto > 0) last_tonic(last_tonic>0) last_clonic(last_clonic>0)])*.2);
-    plot_start = sem_start-(perdur*3);
+    plot_start = sem_start-(perdur*6);
     plot_end = sem_end+perdur;
 
     % x, y, and matrix values
@@ -203,7 +203,7 @@ if yes_plot
     xlim([plot_start plot_end])
 
     % color
-    colorbar('location','southoutside','Ticks',[.5:1:4.5],'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
+    colorbar('location','southoutside','Ticks',.5:1:4.5,'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
     cmap = [0.8,0.8,0.8;1,1,0;0,.4,1;.9,0,0;1,1,1]; % 0=Grey, 1=yellow, 2=blue, 3=red, 4=white
     colormap(gca,cmap);
 
@@ -224,6 +224,10 @@ if yes_plot
     xlabel('Time (seconds)')
 
     % x line grids on and halfway between each x tick        
+    
+    x_ticks = (ceil(plot_start/10)*10):20:ceil(plot_end/10)*10;
+    set(gca,'xtick',x_ticks)
+    
     xt = xticks;
     iter = (xt(2)-xt(1))/2;
     if xt(length(xt)) < plot_end - iter
@@ -232,8 +236,10 @@ if yes_plot
     xt_iter = xt(1):iter:xt(length(xt)); % x line halfway between each x tick
     
     for xl = 1:length(xt_iter)
-        line([xt_iter(xl) xt_iter(xl)],ylim,'Color','k','LineWidth',.01) % x line at each x tick
+        line([xt_iter(xl) xt_iter(xl)],ylim,'Color','k','LineWidth',.001) % x line at each x tick
     end
 
 
 end
+
+line([sem_start sem_start],ylim,'Color','m','LineWidth',2.5)
