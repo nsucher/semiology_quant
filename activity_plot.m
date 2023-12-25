@@ -21,8 +21,6 @@ neg_m = table2array(neg_T(1:end,ptsz_i+1)); %extract linelength meandiff (negati
 
 % all_m = table2array(all_T(~isnan(all_T(:,ptsz_i+1)),ptsz_i+1)); %extract linelength meandiff (positive or negative value of deviation from mean line length) 
 
-num_sxmx = length(unique(lat_sxmx));
-
 pv_m = table2array(all_pv_T(1:end,ptsz_i+1)); % pvals per ll meandiff of neurosem across all electrodes
 pos_pv_m = table2array(pos_pv_T(1:end,ptsz_i+1)); % pvals per ll meandiff of neurosem across all electrodes
 neg_pv_m = table2array(neg_pv_T(1:end,ptsz_i+1)); % pvals per ll meandiff of neurosem across all electrodes

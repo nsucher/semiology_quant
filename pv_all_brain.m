@@ -13,7 +13,7 @@ getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path);
 shading flat
 
 npt_pos = nan(26,1);
-req_pos = nan(27,length(lat_sxmx));
+req_pos = nan(27,npt);
 % percent_pos = nan(27,1);
 percent_pos_req = nan(27,1);
 
@@ -27,17 +27,17 @@ pos_num_elecs_min(pos_num_elecs_min < minnumpts) = NaN;
 
 cd(data_path)
 
-for lat = 1:length(lat_sxmx)
-    if lat == 1
-        pos_pv_T = readtable('pos_pv.xlsx', 'Sheet', lat_sxmx{lat},'VariableNamingRule','preserve');
+for l_i = 1:length(lat_sxmx)
+    if l_i == 1
+        pos_pv_T = readtable('pos_pv.xlsx', 'Sheet', lat_sxmx{l_i},'VariableNamingRule','preserve');
         pos_labels(:,1) = table2array(pos_pv_T(1:end,1));
         pos_pv_m = table2array(pos_pv_T(1:end,2:end));%(1:end,1:end)); % pvals per ll meandiff of neurosem across all electrodes
     end
-    if req_col >= lat
-        req_idx = find(req_elecs(:,lat) > 0);
+    if req_col >= l_i
+        req_idx = find(req_elecs(:,l_i) > 0);
         for r = 1:length(req_idx)
-            if pos_pv_m(req_idx(r),lat) < .05
-                req_pos(req_idx(r),lat) = pos_pv_m(req_idx(r),lat);
+            if pos_pv_m(req_idx(r),l_i) < .05
+                req_pos(req_idx(r),l_i) = pos_pv_m(req_idx(r),l_i);
             end
         end
     end

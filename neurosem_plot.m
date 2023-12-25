@@ -1,4 +1,4 @@
-function [ts_sx,sx_sec] = neurosem_plot(uber_pt,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
+function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
 
 
 % Function to generate figures analyzing change of neural activity during onset of seizure symptom
@@ -16,33 +16,22 @@ mni = 1; %average brain
 % mni = 0; %individual brains
 
 tic
- 
-
-ts_sx_vec = []; %collect start time of symptom onset in seconds
-
 
 % KEEP TRACK OF FOR LOOPS 
 sxmx_count = 0;
 
 % CHOOSE NEUROANATOMICAL LOCATION TO ANALYZE (FREE SURFER LABELS)
-reg_all = {'stg','mtg','itg','fus','tp','ph','hp','am','ent','pt','po','por','cmf','rmf','sf','sm','mof','lof','fp','prec','postc'};
-
-neuroanat_list = ['frontalpole', 'parstriangularis', 'parsopercularis', 'parstriangularis',...
-    'parsopercularis', 'parsorbitalis', 'rostralmiddlefrontal', 'caudalmiddlefrontal',...
-    'lateralorbitofrontal','superiorfrontal','medialorbitofrontal','precentral','postcentral',...
-    'inferiorparietal','superiorparietal','supramarginal','temporalpole','middletemporal',...
-    'superiortemporal','inferiortemporal','parahippocampal','Right-Hippocampus','Left-Hippocampus',...
-    'Right-Amygdala','Left-Amygdala','entorhinal','bankssts','fusiform', 'lingual'];
-
-abv_neuroanat_list = ['front-pole','parstri','parsop','parsorb','rost-midfront','caud-midfront',...
-    'latorb-front','sup-front','medorb-front','precentral','postcentral','inf-par','sup-par',...
-    'supra-marg','temp-pole','mid-temp','sup-temp','inf-temp','parahip','R-Hip','L-Hip','R-Amyg',...
-    'L-Amyg','entorhinal','bankssts','fusiform','lingual'];
-
-num_anat = length(neuroanat_list);
-
-% CHOOSE RADIUS HERE
-dst_radius = 10; % minimum distance in mm from electrode to each vertex
+% reg_all = {'stg','mtg','itg','fus','tp','ph','hp','am','ent','pt','po','por','cmf','rmf','sf','sm','mof','lof','fp','prec','postc'};
+% 
+% neuroanat_list = ['frontalpole', 'parstriangularis', 'parsopercularis', 'parstriangularis',...
+%     'parsopercularis', 'parsorbitalis', 'rostralmiddlefrontal', 'caudalmiddlefrontal',...
+%     'lateralorbitofrontal','superiorfrontal','medialorbitofrontal','precentral','postcentral',...
+%     'inferiorparietal','superiorparietal','supramarginal','temporalpole','middletemporal',...
+%     'superiortemporal','inferiortemporal','parahippocampal','Right-Hippocampus','Left-Hippocampus',...
+%     'Right-Amygdala','Left-Amygdala','entorhinal','bankssts','fusiform', 'lingual'];
+% 
+% % CHOOSE RADIUS HERE
+% dst_radius = 10; % minimum distance in mm from electrode to each vertex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,17 +54,12 @@ delete elec_w8s.xlsx
 
 cd(opscea_path)
 
-%   1.5. for loop 
-lat_sxmx = {};
-
+lat_sxmx = cell(1,num_ptsz);
 sz_nns_mat =  cell(1,num_ptsz);
 sz_w8s_mat = cell(1,num_ptsz); 
 szxyz_mat = cell(1,num_ptsz);
 
 mni_xyz_cell = cell(1,num_ptsz);
-
-elecs_msize = zeros(2,num_ptsz);
-e_max_vec = ones(length(reg_all),num_ptsz);
 
 num_elecs = [];
 first_sx_vec = zeros(1,num_ptsz); %initialize empty vector to collect timestamps for onset of symtpoms for each patient
@@ -86,14 +70,12 @@ sx_name = sx_input{1};
 for mx_i = 1:length(mx_input) % for loop throughout modes
     mx_name = mx_input{mx_i};
 
-    sxmx_name = [sx_name ' ' mx_name];
+    pt_sxmx_name = [sx_name ' ' mx_name];
 
     sxmx_count = sxmx_count + 1;
 
     sz_count = 0;
     for ptsz_i = 1:num_ptsz % for loop throughout seizures
-
-        pt_sxmx_name=sxmx_name;
         
         split_manual_ptsz = split(manual_ptsz{ptsz_i},'_');
         pt_name = split_manual_ptsz{1};
@@ -141,31 +123,20 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
 
         terminate(pyenv)
         pyenv("ExecutionMode","OutOfProcess","Version",python_path);
-
-        
+    
         [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         
-%             all_pv_m = nan(num_anat,num_ptsz);%
-%             all_sign_m = nan(num_anat,num_ptsz);%
-%             elec_w8s_m = nan(1,num_ptsz); %will grow later--depends on patient with most electrodes
-% 
-% 
-%             [laterality, w8s_array, anat_array, good_mni, first_mx] = plot_change(num_ptsz,pt_sxmx_name,sx_name,mx_name,ptsz_name,pt_name,perdur_input,opscea_path,data_path,sz_count,sxmx_count,ptsz_i,min_elec,e_row,mni_xyz,neuroanat_list,abv_neuroanat_list,num_anat,all_pv_m,all_sign_m,elec_w8s_m);
-
-        if matches(pt_name,uber_pt)
+        if ptsz_i == uber_i
             first_sx_vec(1,ptsz_i) = first_mx;
-            ts_sx = int64(first_mx);
         end
       
-%         ts_sx_vec(sx_i,ptsz_i) = ts_sx; %pt = cols; symptoms = rows
         good_mni_list = good_mni.tolist();
         good_mni_mat = nan(length(good_mni_list)-1,3);
         len_good_mni = length(good_mni_list)-1;
 
-
         [w8_cell, sz_w8s, sz_nns, szxyz] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
        
-        
+     
         for w_anat = 2:length(w8s_array)
             num_elecs(w_anat-1,ptsz_i) = length(w8_cell{1,w_anat-1});
         end
@@ -175,29 +146,11 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
                 good_mni_mat(m,xyz) = good_mni_list{m}{xyz};
             end
         end
-        %ELECTRODES BY REGION PLOT
-        % reg_count = 0;
-        % for reg_i = 1:length(reg_all)
-        % 
-        %     reg_count = reg_count+1;
-        %     cd(opscea_path)
-
-%            if mni == 1
-%                [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},"MNI",reg_all{reg_i},lat_sxmx{sz_count}, mni_xyz, anatomy, reg_count, opscea_path, data_path);
-%            else
-%                [e_max] = pt_brain_elecs(manual_ptsz{ptsz_i},pt_name,reg_all{reg_i},lat_sxmx{sz_count}, em1, anatomy, reg_count, opscea_path, data_path);
-%            end
-
-%            e_max_vec(reg_i,ptsz_i) = e_max;
-%        end
 
         mni_xyz_cell{ptsz_i} = good_mni_mat;
         sz_nns_mat{1,ptsz_i} =  sz_nns;
         sz_w8s_mat{1,ptsz_i} = sz_w8s; 
         szxyz_mat{1,ptsz_i} = szxyz;
-%        elecs_msize(1,ptsz_i) = max(e_max_vec(:,ptsz_i));
-%         cd(opscea_path)
-%         mondrian_plot(pt_name,sz_name,10,ts_sx/5,1,opscea_path,data_path);
     end
 end 
  
@@ -228,6 +181,5 @@ pv_all_brain(sx_input,lat_sxmx,num_ptsz,num_elecs,min_elec,min_pt,opscea_path,da
 
 %OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
 sx_sec = first_sx_vec/5;
-
+sx_plot = sx_sec(1);
 % 
-k=2;

@@ -1,4 +1,4 @@
-function [sem_start,plot_start,plot_end] = mondrian_plot(pt,sz,perdur,yes_plot,opscea_path,data_path)
+function [sem_start,plot_start,plot_end] = mondrian_plot(uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
@@ -10,6 +10,9 @@ if yes_plot
     % 1. Load data and find number of columns
     if ~exist(data_path,'dir'); error('Directory for your data needs to be corrected'); end
 
+    ptsz = split(uber_ptsz,'_');
+    pt = ptsz{1};
+    sz = ptsz{2};
     cd([data_path pt '/' pt '_' sz]);
 
     sem_matrix_filename = [pt '_' sz '_mat.csv'];
@@ -27,92 +30,103 @@ if yes_plot
     for i = 1:t_cols                                
         feature_el=sem_matrix.Properties.VariableNames{i}; %JK
         feature_el_vec = [feature_el_vec;sem_matrix.Properties.VariableNames{i}];
+        laterality = feature_el(1);
         anatomy = feature_el(1:2);
         position = feature_el(3);
 %         motor = feature_el(4);
-    
+        
+        % Laterality
+        if strcmpi(laterality,uber_lat)
         % Anatomy
-        switch anatomy 
-            case 'lu'; full_anat = 'L Arm'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'ru'; full_anat = 'R Arm'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'lh'; full_anat = 'L Head'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'rh'; full_anat = 'R Head'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'le'; 
-                full_anat = 'L Eye '; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 're'; 
-                full_anat = 'R Eye'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'lm'; 
-                full_anat = 'L Mouth'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'rm'; 
-                full_anat = 'R Mouth'; 
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-%             case 'ht'; full_anat = 'Head Turn'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-%             case 'tt'; full_anat = 'Torso Turn';
-%             case 'vx'; full_anat = 'Voice';
-%             case 'gm'; full_anat = 'Gyratory Movement';
-%             case 'rx'; full_anat = 'Rocking';
-%             case 'bb'; full_anat = 'Bimanual Bipedal Automatism';
-%             case 'wx'; full_anat = 'Walking';
-%             case 'fx'; full_anat = 'Falling';
-%             case 'px'; full_anat = 'Pedaling';
-%             case 'ln'; full_anat = 'Left Hand';
-%                 
-%             case 'rn'; full_anat = 'Right Hand';
-            case 'll'; 
-                full_anat = 'L Leg';
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-            case 'rl'; 
-                full_anat = 'R Leg';
-                sx_count = sx_count + 1; 
-                sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-%             case 'lf'; full_anat = 'Left Foot';
-%             case 'rf'; full_anat = 'Right Foot';
-%             case 'br'; full_anat = 'Behavioral Arrest';
-%             case 'fa'; full_anat = 'Facial Automatism';
-%             case 'oa'; full_anat = 'Oral Automatism';
-%             case 'fa'; full_anat = 'Quadritonic';
-%             case 'cg'; full_anat = 'Chapeau de Gendarme';
-%             case 'fe'; full_anat = 'Facial Expression';
-        end
+            switch anatomy 
+                case 'lu' 
+                    full_anat = 'L Arm'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'ru' 
+                    full_anat = 'R Arm'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'lh' 
+                    full_anat = 'L Head'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'rh' 
+                    full_anat = 'R Head'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'le' 
+                    full_anat = 'L Eye '; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 're' 
+                    full_anat = 'R Eye'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'lm' 
+                    full_anat = 'L Mouth'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'rm' 
+                    full_anat = 'R Mouth'; 
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+    %             case 'ht'; full_anat = 'Head Turn'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+    %             case 'tt'; full_anat = 'Torso Turn';
+    %             case 'vx'; full_anat = 'Voice';
+    %             case 'gm'; full_anat = 'Gyratory Movement';
+    %             case 'rx'; full_anat = 'Rocking';
+    %             case 'bb'; full_anat = 'Bimanual Bipedal Automatism';
+    %             case 'wx'; full_anat = 'Walking';
+    %             case 'fx'; full_anat = 'Falling';
+    %             case 'px'; full_anat = 'Pedaling';
+    %             case 'ln'; full_anat = 'Left Hand';
+    %                 
+    %             case 'rn'; full_anat = 'Right Hand';
+                case 'll' 
+                    full_anat = 'L Leg';
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+                case 'rl' 
+                    full_anat = 'R Leg';
+                    sx_count = sx_count + 1; 
+                    sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
+    %             case 'lf'; full_anat = 'Left Foot';
+    %             case 'rf'; full_anat = 'Right Foot';
+    %             case 'br'; full_anat = 'Behavioral Arrest';
+    %             case 'fa'; full_anat = 'Facial Automatism';
+    %             case 'oa'; full_anat = 'Oral Automatism';
+    %             case 'fa'; full_anat = 'Quadritonic';
+    %             case 'cg'; full_anat = 'Chapeau de Gendarme';
+    %             case 'fe'; full_anat = 'Facial Expression';
+            end
+        
     
-        % Position
-        switch position 
-            case 'p'; 
-                full_pos = 'Proximal';
-            case 'd'; 
-                full_pos = 'Distal';
-%             case 'l'; full_pos = 'Left';
-%             case 'r'; full_pos = 'Right';
-%             case 'c'; full_pos = 'Center';
-%             case 't'; full_pos = 'Twitch';
-%             case 'y'; full_pos = 'Pull'; %y stands for yank so pull doesn't get confused with proximal
-%             case 's'; full_pos = 'Superior';
-%             case 'i'; full_pos = 'Inferior';
-%             case 'f'; full_pos = 'Forward';
-%             case 'b'; full_pos = 'Backward';
-%             case 'n'; full_pos = 'Nonverbal';
-%             case 'v'; full_pos = 'Verbal';
-            case 'x'; 
-                full_pos = [];
-        end
+            % Position
+            switch position 
+                case 'p' 
+                    full_pos = 'Proximal';
+                case 'd' 
+                    full_pos = 'Distal';
+    %             case 'l'; full_pos = 'Left';
+    %             case 'r'; full_pos = 'Right';
+    %             case 'c'; full_pos = 'Center';
+    %             case 't'; full_pos = 'Twitch';
+    %             case 'y'; full_pos = 'Pull'; %y stands for yank so pull doesn't get confused with proximal
+    %             case 's'; full_pos = 'Superior';
+    %             case 'i'; full_pos = 'Inferior';
+    %             case 'f'; full_pos = 'Forward';
+    %             case 'b'; full_pos = 'Backward';
+    %             case 'n'; full_pos = 'Nonverbal';
+    %             case 'v'; full_pos = 'Verbal';
+                case 'x' 
+                    full_pos = [];
+            end
 
-        y_label_names{sx_count} = [full_anat ' ' full_pos];
+            y_label_names{sx_count} = [full_anat ' ' full_pos];
+
+        end
+        
 
     end           
 
@@ -128,8 +142,6 @@ if yes_plot
 
     t_sec = rows * .2; %convert to sec 
  
-    col_num = [];
-
     first_auto = [];
     last_auto = [];
 

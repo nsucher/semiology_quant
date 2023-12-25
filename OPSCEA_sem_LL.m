@@ -1,4 +1,4 @@
-function OPSCEA_sem_LL(pt,sz,showlabels,jumpto,to_plot,plot_start,plot_end,opscea_path,data_path)
+function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end,opscea_path,data_path)
 % EXAMPLE USAGE: OPSCEA('UCSF1','01',1,0)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
@@ -34,13 +34,13 @@ function OPSCEA_sem_LL(pt,sz,showlabels,jumpto,to_plot,plot_start,plot_end,opsce
 
 %     Updated by Natalia Sucher May 26 2022
 
-if to_plot
+if sx_plot
     if ~exist('showlabels','var')||isempty(showlabels);
         showlabels=true; 
     end %default displays ICEEG and depth labels
 
-    if ~exist('jumpto','var')||isempty(jumpto); 
-        jumpto=0; 
+    if ~exist('jumpto','var')||isempty(sx_plot); 
+        sx_plot=0; 
     end 
     
  %   opscea_path=['/Users/nataliasucher/Desktop/UCSF/coding/OPSCEA/'];   %path for parameters sheet
@@ -50,9 +50,11 @@ if to_plot
     end
     cd(opscea_path);
     
-    ptsz=[pt '_' sz]; % prefix for filenames of specific seizure
+    % ptsz=[pt '_' sz]; % prefix for filenames of specific seizure
+    % ptsz = uber_ptsz;
+    [pt,sz] = split(uber_ptsz);
     ptpath=[data_path pt '/']; % patient's folder
-    szpath= [ptpath ptsz '/']; % specific seizure's folder
+    szpath= [ptpath uber_ptsz '/']; % specific seizure's folder
     disp(['Running ' pt ', seizure ' sz '...']);
     
     %% Initiate global variables
@@ -68,32 +70,49 @@ if to_plot
     [~,prm_allPtSz]=xlsread([data_path 'OPSCEAparams'],'params'); 
         fields_SZ=prm_allPtSz(1,:); % header for columns of seizure parameters
         prm=prm_allPtSz(strcmp(pt,prm_allPtSz(:,1))&strcmp(sz,prm_allPtSz(:,2)),:);
-        if isempty(prm); error(['ATTENTION: No entry exists for ' pt ' seizure ' sz ' in the params master sheet']); end
+        if isempty(prm) 
+            error(['ATTENTION: No entry exists for ' pt ' seizure ' sz ' in the params master sheet']); 
+        end
     % Import parameters for patient's specific plot (layout of video frame)
     [~,plt]=xlsread([data_path 'OPSCEAparams'],pt); 
-        fields_PLOT=plt(1,:); plt(1,:)=[]; % header for columns of plotting parameters
+        fields_PLOT=plt(1,:); 
+        plt(1,:)=[]; % header for columns of plotting parameters
         plottype=plt(:,strcmpi(fields_PLOT,'plottype')); %type of plot for each subplot (accepts: iceeg, surface, depth, or colorbar)
-    
+        %LATERALITY
+        for p = 1:length(plt)
+            if strcmpi(plottype{p},'cortex'()
+        end
+        plt = plt(1:7,:); % contralateral cortex only
     cd 
     %% prepare subplot specifications
         subplotrow=str2double(plt(:,strcmpi(fields_PLOT,'subplotrow')));
         subplotcolumn=str2double(plt(:,strcmpi(fields_PLOT,'subplotcolumn')));
-        subplotstart=plt(:,strcmpi(fields_PLOT,'subplotstart')); subplotstop=plt(:,strcmpi(fields_PLOT,'subplotstop')); 
-        for j=1:length(plottype); subplotnum{j,1}=str2double(subplotstart{j}):str2double(subplotstop{j});
+        subplotstart=plt(:,strcmpi(fields_PLOT,'subplotstart')); 
+        subplotstop=plt(:,strcmpi(fields_PLOT,'subplotstop')); 
+        for j=1:length(plottype) 
+            subplotnum{j,1}=str2double(subplotstart{j}):str2double(subplotstop{j});
         end
         surfaces=plt(:,strcmpi(fields_PLOT,'surfaces'));
         surfacesopacity=plt(:,strcmpi(fields_PLOT,'surfacesopacity'));
         viewangle=lower(plt(:,strcmpi(fields_PLOT,'viewangle')));
     
     %% parcel all individual depth labels, contact #s, and colors. If no depths, make it  =[];
-      depthlabels=plt(:,strcmpi(fields_PLOT,'depthlabels'));
-      isdepth=strcmpi(plottype,'depth'); depths=cell(size(isdepth));
+      % depthlabels=plt(:,strcmpi(fields_PLOT,'depthlabels'));
+      isdepth=strcmpi(plottype,'depth'); 
+      depths=cell(size(isdepth));
       if any(isdepth)
-        depthEfirst=plt(:,strcmpi(fields_PLOT,'depthEfirst')); depthElast=plt(:,strcmpi(fields_PLOT,'depthElast')); 
-        for j=1:length(depths); depths{j}=str2double(depthEfirst{j}):str2double(depthElast{j});
-        end
-        depthcolor=plt(:,strcmpi(fields_PLOT,'depthcolor')); 
-        for j=1:length(depthcolor); splt=regexp(depthcolor{j},',','split'); depthcolor{j}=str2double(splt); end 
+      %   depthEfirst=plt(:,strcmpi(fields_PLOT,'depthEfirst')); 
+      %   depthElast=plt(:,strcmpi(fields_PLOT,'depthElast')); 
+      %   for j=1:length(depths) 
+      %       depths{j}=str2double(depthEfirst{j}):str2double(depthElast{j});
+      %   end
+      % 
+      %   depthcolor=plt(:,strcmpi(fields_PLOT,'depthcolor')); 
+      % 
+      %   for j=1:length(depthcolor) 
+      %       splt=regexp(depthcolor{j},',','split'); 
+      %       depthcolor{j}=str2double(splt); 
+      %   end 
         pltzoom=str2double(plt(:,strcmpi(fields_PLOT,'pltzoom')));
         pltshowplanes=str2double(plt(:,strcmpi(fields_PLOT,'showplanes')))==1; %logical index of plots in which to show slice planes
       end
@@ -141,8 +160,8 @@ if to_plot
     S.sliceplane='c'; % calculate omni-planar slice angles with respect to coronal (c) plane
     
     %% load ICEEG data, and the bad channels verified for that specific data
-    load([szpath ptsz])
-    load([szpath ptsz '_badch']); 
+    load([szpath uber_ptsz])
+    load([szpath uber_ptsz '_badch']); 
     % rename and clear old format of electrode files -NS
     if exist('ppEEG','var')
         d = ppEEG; clear ppEEG; end;
@@ -208,7 +227,10 @@ if to_plot
       if any(amygentry); Ramyg=[ptpath meshpath 'subcortical/rAmgd_subcort.mat']; Lamyg=Ramyg; Lamyg(end-16)='l'; if exist(Ramyg,'file'); Ramyg=load(Ramyg); Ramyg=Ramyg.cortex;  Lamyg=load(Lamyg); Lamyg=Lamyg.cortex;     else; error([errmsg 'amyg']); end; end
     drows=find(strcmp(plottype,'depth'))'; ndepths=length(drows);
     
-    depthch=[]; for i=1:length(drows); depthch=[depthch depths{drows(i)}]; end; clear i %identify all depth electrode channels
+    % depthch=[]; 
+    % for i=1:length(drows); 
+    %     depthch=[depthch depths{drows(i)}]; 
+    % end; clear i %identify all depth electrode channels
     
     %% get xyz limits for plotting purposes
     perim=1; % how many millimeters away from brain/electrodes boundaries to set the colorcoded plane perimeter, recommend >0 to avoid skimming brain surface (default 1mm)
@@ -274,7 +296,7 @@ if to_plot
         scl=2/diff(prctile(reshape(d,1,numel(d)),S.iceeg_scale)); 
     S.marg=round(S.marg*sfx); %offset of real-time LL txform from beginning of viewing window
 %     jumpto=S.marg+round(jumpto*sfx); %Jump ahead (sec), so video starts this much farther into the file if desired. Input argument.
-    jumpto=S.marg+round(to_plot*sfx)-sfx; %Jump ahead (sec), so video starts this much farther into the file if desired. Input argument.
+    sx_plot=S.marg+round(sx_plot*sfx)-sfx; %Jump ahead (sec), so video starts this much farther into the file if desired. Input argument.
 
     S.fram=round(sfx/S.fps);
     
@@ -288,7 +310,7 @@ if to_plot
     chanorder=1:size(d(nns,:),1); if ~showlabels; chanorder=randperm(size(d(nns,:),1)); end % if desired, blinds user by randomizing channel order
     figure('color','w','Position',[1 5 1280 700]); 
     % frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
-    for i = jumpto
+    for i = sx_plot
         subplot(1,1,1); %clears all axes, to start fresh each frame
         w8s=LL(:,i); 
         w8s(~nns)=0; %make weights for electrodes, and set NaNs (bad channels) to zero
@@ -318,7 +340,7 @@ if to_plot
                   ttl1=title('ICEEG'); set(ttl1,'fontsize',10)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
               hold on;           
-              plot([to_plot to_plot],ylim,'m-') % vertical magenta line that follows time
+              plot([sx_plot sx_plot],ylim,'m-') % vertical magenta line that follows time
     
             %Clear non-labeled channels beyond size of number of electrode rows
             %Vectorize unwanted channels 
@@ -350,7 +372,7 @@ if to_plot
               new_w8s = w8s;
               new_w8s(noneed,:) = [];
               subplot(2,100,62:100)
-              [si]=LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,S.cax);
+              [si]=LL_plot(new_anat,new_LL,ts,sx_plot,plot_start,plot_end,sfx,S.cax);
 
              
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,9 +385,10 @@ if to_plot
 
           case 'SURFACE' % plotting surfaces only
               if matches(surfaces{j},'rcortex')
-                  hold off; srf=regexp(surfaces{j},',','split'); % list the specific surfaces wanted for this subplot
+                  hold off; 
+                  srf=regexp(surfaces{j},',','split'); % list the specific surfaces wanted for this subplot
                   srfalpha=regexp(surfacesopacity{j},',','split'); % list their corresponding opacities (values from 0 to 1; 0=invisible, 1=opaque)
-                  if length(srf)~=length(srfalpha); 
+                  if length(srf)~=length(srfalpha)
                       msgbox('Number of surface to plot does not match number of alpha designations, check excel sheet'); 
                       return; 
                   end
@@ -400,7 +423,6 @@ if to_plot
                             plot3(new_em(:,1),new_em(:,2),new_em(:,3),'o','Color','k','MarkerFaceColor','k','markersize',2.5); 
                         end 
                     else 
-                        % plot3(new_em(nns,1),new_em(nns,2),new_em(nns,3),'k.','markersize',10-5*(1/nch*10)); %plot electrodes
                         plot3(new_em(:,1),new_em(:,2),new_em(:,3),'o','Color','k','MarkerFaceColor','k','markersize',2.5); %plot electrodes
                     end
                     cameratoolbar('setmode',''); 
@@ -413,9 +435,15 @@ if to_plot
                     if strcmp(viewangle{j},'i')
                         view(90+isL*180,270)
                     end
-                    if pltshowplanes(j)||(strcmp(viewangle{j},'i')&&~isempty(intersect(srf,'wholebrain'))); view(180,270); end %orients the "show planes" slice to a classic axial perspective
+                    if pltshowplanes(j)||(strcmp(viewangle{j},'i')&&~isempty(intersect(srf,'wholebrain'))) 
+                        view(180,270); 
+                    end %orients the "show planes" slice to a classic axial perspective
                     axis(axislim); 
-                    if strcmpi(viewangle{j},'i')||strcmpi(viewangle{j},'s')||strcmpi(viewangle{j},'a')||strcmpi(viewangle{j},'p');  if ~strcmpi(pt,'NO181'); axis([axislim(1)*isL+10*isR axislim(2)*isR+10*isL  axislim(3:6)]); end; end
+                    if strcmpi(viewangle{j},'i')||strcmpi(viewangle{j},'s')||strcmpi(viewangle{j},'a')||strcmpi(viewangle{j},'p');  
+                        if ~strcmpi(pt,'NO181') 
+                            axis([axislim(1)*isL+10*isR axislim(2)*isR+10*isL  axislim(3:6)]); 
+                        end 
+                    end
                     zoom(pltzoom(j)); 
                     hold on;                         
                     cd(opscea_path)
@@ -425,4 +453,5 @@ if to_plot
             end
         end  
      end
-end    
+   end
+end
