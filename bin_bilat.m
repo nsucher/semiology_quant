@@ -51,16 +51,17 @@ Mpercent(isnan(Mpercent)) = 0;
 
 figure('name',num2str(minnumpts),'color','w','position',[230 171 1000 796]);
 
+% PLOT GRID FOR GLASS BRAIN
+ylim(Y([1 end])); zlim(Z([1 end])); %in same axis limits for orientation
+axis on
+set(gca,'ytick',Y,'ztick',Z,'LineWidth',1,'GridColor','k') %grid lines where the boundaries should be
+
+% PLOT 3D GLASS BRAIN
 ax1 = subplot(2,2,1); 
 getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path); %brain for orientation
 hold on;
 shading interp
 axis equal; axis off; set(gca,'clipping','off'); lightsout; litebrain('r',1)
-% alpha(.6)
-
-ylim(Y([1 end])); zlim(Z([1 end])); %in same axis limits for orientation
-axis on
-set(gca,'ytick',Y,'ztick',Z) %grid lines where the boundaries should be
 alpha .5 % transparency to see the grid lines better
 
 ax3 = subplot(2,2,3); % total significant patients per square
