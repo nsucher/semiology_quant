@@ -33,10 +33,9 @@ if yes_plot
         laterality = feature_el(1);
         anatomy = feature_el(1:2);
         position = feature_el(3);
-%         motor = feature_el(4);
         
         % Laterality
-        if strcmpi(laterality,uber_lat)
+        if strcmpi(laterality,uber_lat) % plot only contralateral symptoms
         % Anatomy
             switch anatomy 
                 case 'lu' 
@@ -136,7 +135,6 @@ if yes_plot
     nums_t_mat=table2array(sem_matrix(:,:));
     % -----------------------------------------------------------------
     % 5. Bin present symptoms (clean mat) and first appearance of
-    % symptoms (ll_weight_times)
 
     [rows,cols] = size(nums_t_mat);
 
@@ -223,8 +221,6 @@ if yes_plot
     end
 
 
-
-
     xlabel('Time (seconds)')
 
     % x line grids on and halfway between each x tick        
@@ -238,7 +234,6 @@ if yes_plot
     for xl = 1:length(xt_iter)
         line([xt_iter(xl) xt_iter(xl)],ylim,'Color','k','LineWidth',.01) % x line at each x tick
     end
-
 
 
 end

@@ -25,11 +25,11 @@ data_path= [opscea_path,'OPSCEADATA/'];   %path for parameters sheet
 
 %DEBUG FOR NON NSUCHER 
 
-if contains(opscea_path,'/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant')
-    python_path = '/Users/nataliasucher/opt/anaconda3/bin/python';
-else
-    python_path = '/home/nsucher/.conda/envs/sem_quant3/bin/python';
-end
+% if contains(opscea_path,'/Users/nataliasucher/Desktop/UCSF/Coding/semiology_quant')
+%     python_path = '/Users/nataliasucher/opt/anaconda3/bin/python';
+% else
+%     python_path = '/home/nsucher/.conda/envs/sem_quant3/bin/python';
+% end
 
 sx_input_list = {'chx'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
@@ -39,7 +39,8 @@ perdur_input = 10; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 % APPROACH 1,2,3 AND ALL INDIVIDUAL PATIENT ACTIVITY CHANGES AND INDIVIDUAL AND INTRA-PATIENT PVALUES
 for sx_i = 1:length(sx_input_list)
     sx_input = sx_input_list(sx_i);
-    [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
+    % [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
+    [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
 end
 
 uber_lat = lat_sxmx{uber_i}(1); %laterality of focused seizure

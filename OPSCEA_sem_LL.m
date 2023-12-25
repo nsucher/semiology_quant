@@ -32,7 +32,7 @@ function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end
 %     Accuracy of omni-planar and surface casting of epileptiform activity
 %     for intracranial seizure localization. In press at Epilepsia.”
 
-%     Updated by Natalia Sucher May 26 2022
+%     Updated by Natalia Sucher Dec 24 2023
 
 if sx_plot
     if ~exist('showlabels','var')||isempty(showlabels);
@@ -52,7 +52,10 @@ if sx_plot
     
     % ptsz=[pt '_' sz]; % prefix for filenames of specific seizure
     % ptsz = uber_ptsz;
-    [pt,sz] = split(uber_ptsz);
+    ptsz = split(uber_ptsz,'_');
+    pt = ptsz{1};
+    sz = ptsz{2};
+
     ptpath=[data_path pt '/']; % patient's folder
     szpath= [ptpath uber_ptsz '/']; % specific seizure's folder
     disp(['Running ' pt ', seizure ' sz '...']);
@@ -79,10 +82,10 @@ if sx_plot
         plt(1,:)=[]; % header for columns of plotting parameters
         plottype=plt(:,strcmpi(fields_PLOT,'plottype')); %type of plot for each subplot (accepts: iceeg, surface, depth, or colorbar)
         %LATERALITY
-        for p = 1:length(plt)
-            if strcmpi(plottype{p},'cortex'()
-        end
-        plt = plt(1:7,:); % contralateral cortex only
+        % for p = 1:length(plt)
+        %     if strcmpi(plottype{p},'cortex'()
+        % end
+        % plt = plt(1:7,:); % contralateral cortex only
     cd 
     %% prepare subplot specifications
         subplotrow=str2double(plt(:,strcmpi(fields_PLOT,'subplotrow')));
@@ -312,7 +315,7 @@ if sx_plot
     % frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
     for i = sx_plot
         subplot(1,1,1); %clears all axes, to start fresh each frame
-        w8s=LL(:,i); 
+        w8s=LL(:,double(i)); 
         w8s(~nns)=0; %make weights for electrodes, and set NaNs (bad channels) to zero
         for j=1:size(plt,1)
             subplot(subplotrow(j),subplotcolumn(j),subplotnum{j}); %to do: MAKE ONLY ONE BRAIN/SUBPLOT (keeping zLL plot and iceeg plot)

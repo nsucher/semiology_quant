@@ -1,4 +1,4 @@
-function [w8_cell, sz_w8s, sz_nns, szxyz] = activity_plot(laterality, w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni)
+function [w8_cell, sz_w8s, sz_nns, szxyz] = activity_plot(laterality, w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, len_good_mni)
 
 cd(data_path);
 
@@ -38,7 +38,7 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        pv_brain(pos_pv_m,neg_pv_m,pos_pv_T,neg_pv_T,...
+        pv_brain(pos_pv_m,pos_pv_T,...
                  em_m,pt_name,sz_name,ptsz_name,ptsz_i,pt_sxmx_name,laterality,opscea_path,data_path);
 
         py_w8s_cell = cell(w8s_array);

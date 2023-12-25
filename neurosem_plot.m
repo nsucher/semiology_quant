@@ -1,4 +1,4 @@
-function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
+function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
 
 
 % Function to generate figures analyzing change of neural activity during onset of seizure symptom
@@ -7,14 +7,9 @@ function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_inpu
 
 % Natalia Sucher in the Kleen Lab, UCSF
 % Created 1/31/2023
-% Edited 12/12/2023
+% Edited 12/24/2023
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CHANGE INPUTS DEPENDING ON YOUR OWN PREFERENCE
-
-mni = 1; %average brain
-% mni = 0; %individual brains
-
 tic
 
 % KEEP TRACK OF FOR LOOPS 
@@ -122,8 +117,9 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
         cd(opscea_path)
 
         terminate(pyenv)
-        pyenv("ExecutionMode","OutOfProcess","Version",python_path);
-    
+        % pyenv("ExecutionMode","OutOfProcess","Version",python_path);
+        pyenv("ExecutionMode","OutOfProcess");
+
         [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         
         if ptsz_i == uber_i
@@ -134,7 +130,7 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
         good_mni_mat = nan(length(good_mni_list)-1,3);
         len_good_mni = length(good_mni_list)-1;
 
-        [w8_cell, sz_w8s, sz_nns, szxyz] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, lat_sxmx, len_good_mni);      
+        [w8_cell, sz_w8s, sz_nns, szxyz] = activity_plot(string(laterality), w8s_array, anat_array, pt_sxmx_name, ptsz_name, data_path, opscea_path, ptsz_i, pt_name, sz_name, len_good_mni);      
        
      
         for w_anat = 2:length(w8s_array)

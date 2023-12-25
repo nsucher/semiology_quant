@@ -14,7 +14,6 @@ shading flat
 
 npt_pos = nan(26,1);
 req_pos = nan(27,npt);
-% percent_pos = nan(27,1);
 percent_pos_req = nan(27,1);
 
 cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
@@ -55,7 +54,6 @@ npt_pos = npt_pos';
 clear label_i
 
 %PLOT RED BRAIN OF POSITIVE SIGNIFICANCE
-
 cd(opscea_path)
 
 for label_i = 1:length(npt_pos)
@@ -73,10 +71,6 @@ for label_i = 1:length(npt_pos)
             end
     end
 end
-% colormap(cm_percent)
-% cb1 = colorbar;
-% cb1.TickLength = 0;
-
 
 %PLOT PURPLE BRAIN WITH # OF PATIENTS WITH MORE THAN 5 ELECTRODES
 figure('Name','number of patients','Color','w'); % different figure for each symptom/mode combination
@@ -91,5 +85,3 @@ for label_i = 1:length(npt_pos)
     end
 %     end 
 end
-
-k=1;
