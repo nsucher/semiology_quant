@@ -83,7 +83,7 @@ pos_pt_data = flipud(Mptsig');
 ax4 = subplot(2,2,4);  %percent sigificant patients per square
 pcolor(Mpercent); 
 axis equal; axis off;
-cm_percent = cbrewer2('Reds',150,'cubic'); %color map 
+cm_percent = cbrewer2_ns('Reds',150,'cubic'); %color map 
 cm_percent = cm_percent(20:120, :);
 cm_percent = [.85 .85 .85; cm_percent];
 
@@ -103,7 +103,7 @@ ax2 = subplot(2,2,2); %total patients per square
 pcolor(Mnpt'); 
 axis equal; axis off; 
 % colormap(ax2,mintyfresh)
-cm_npt = cbrewer2('Purples',7,'seq');
+cm_npt = cbrewer2_ns('Purples',7,'seq');
 cm_npt = [.85 .85 .85; cm_npt];
 colormap(ax2,cm_npt)
 

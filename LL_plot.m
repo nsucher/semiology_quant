@@ -92,11 +92,12 @@ function LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,cax)
 
            cm = cmOPSCEAjet * .95;
            colormap(cm);
+
            shading flat;
           
            % modify axes
            xlabel('Time (seconds)')           
-           set(gca,'ytick',yt_LL,'yticklabel',ytl_LL,'ydir','reverse','yaxislocation','right','fontsize',12)
+           set(gca,'ytick',yt_LL,'yticklabel',ytl_LL,'ydir','reverse','yaxislocation','right','fontsize',8)
 
 
            title('Line Length')
