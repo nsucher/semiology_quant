@@ -1,4 +1,4 @@
-1. Download files from semiology_quant repository  
-2. Copy semiology_quant repository into your own folder
-3. Move all files inside Home/Desktop/Coding/move_to_OPSCEADATA folder into Home/Desktop/Coding/semiology_quant/OPSCEADATA
+1. Create '/data/shared/nsucher/share/semiology_quant' on your computer
+2. Download files from semiology_quant repository into the path in #1
+3. Copy and paste into the path from #1 the OPSCEA data files "OPSCEADATA" that includes patient files and average patient (MNI) files
 4. Run uberfunction.m from semiology_quant
