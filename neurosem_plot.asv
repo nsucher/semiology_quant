@@ -1,4 +1,4 @@
-function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz,env_path)
+function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz)
 
 
 % Function to generate figures analyzing change of neural activity during onset of seizure symptom
@@ -118,7 +118,7 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
 
         terminate(pyenv)
         % pyenv("ExecutionMode","OutOfProcess","Version",python_path);
-        pyenv(Version=env_path,ExecutionMode="OutOfProcess");
+        pyenv(Version="/usr/bin/python3",ExecutionMode="OutOfProcess");
 
         [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         

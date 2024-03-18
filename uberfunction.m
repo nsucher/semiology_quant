@@ -16,12 +16,13 @@ uber_i = find(strcmpi(manual_ptsz,uber_ptsz),1);
 % index uber_pt/sz in manual_ptsz to match up with lat to only display contralateral side 
 
 min_elec = 5; % MINIMUM ELECTRODES REQUIRED PER NEUROANATOMICAL LOCATIONS
-
 min_pt = ceil(num_ptsz/2); %  MINIMUM PATIENTS REQUIRED FOR MAJORITY 
 
 %SET PATH IF COPIED ELSEWHERE
 opscea_path = [pwd,'/'];
 data_path= [opscea_path,'OPSCEADATA/'];   %path for parameters sheet
+env_var = ["/home/",getenv("USERNAME"),"/.conda/envs/sem_env/bin/python"];
+env_path = join(env_var,""); %path for python environment
 
 %DEBUG FOR NON NSUCHER 
 
@@ -40,7 +41,7 @@ perdur_input = 10; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 for sx_i = 1:length(sx_input_list)
     sx_input = sx_input_list(sx_i);
     % [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
-    [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
+    [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz,env_path);
 end
 
 uber_lat = lat_sxmx{uber_i}(1); %laterality of focused seizure
