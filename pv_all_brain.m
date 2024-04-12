@@ -7,8 +7,10 @@ req_elecs = num_elecs >= min_elec; %matrix anatomies by patient with sufficient 
 [~,req_col] = size(req_elecs);
 
 % establish neuroanatomy labels
+fig_name_pv_all_pos = [sx_input{1,1} ': positive significance'];
 
-figure('Name',[sx_input{1,1} '- positive significance'],'Color','w'); % different figure for each symptom/mode combination
+
+figure('Name',fig_name_pv_all_pos,'Color','w'); % different figure for each symptom/mode combination
 getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path);
 shading flat
 
@@ -72,8 +74,13 @@ for label_i = 1:length(npt_pos)
     end
 end
 
+exportgraphics(gcf, [fig_name_pv_all_pos, '.png'])
+
+
 %PLOT PURPLE BRAIN WITH # OF PATIENTS WITH MORE THAN 5 ELECTRODES
-figure('Name','number of patients','Color','w'); % different figure for each symptom/mode combination
+fig_name_pv_all_num_pts = 'number of patients with electrode coverage';
+
+figure('Name',,'Color','w'); % different figure for each symptom/mode combination
 getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path);
 shading flat
 
@@ -85,3 +92,6 @@ for label_i = 1:length(npt_pos)
     end
 %     end 
 end
+
+exportgraphics(gcf, [fig_name_pv_all_num_pts, '.png'])
+

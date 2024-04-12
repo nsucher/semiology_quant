@@ -19,7 +19,8 @@ idx=(ptsz_i-1)*3;
 szxyz(:,:)=em_m(:,idx+1:idx+3);
 
 if any(pos_pv_m)
-    figure('Name',[sxmx_name ' ' ptsz_name ': positive significance'],'Color','w'); % different figure for each symptom/mode combination
+    fig_name_sig = [sxmx_name ' ' ptsz_name ': positive significance'];
+    figure('Name',fig_name_sig,'Color','w'); % different figure for each symptom/mode combination
 
 
     getbrain4_ns(pt_name,sz_name,1,0,laterality,opscea_path,data_path);
@@ -58,3 +59,4 @@ if any(pos_pv_m)
     end
 end
 
+saveas(gcf, [fig_name_sig,'.png'])

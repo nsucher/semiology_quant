@@ -37,7 +37,8 @@ env_path = join(env_var,""); %path for python environment
 %     python_path = '/home/nsucher/.conda/envs/sem_quant3/bin/python';
 % end
 
-sx_input_list = {'clp'};% EDIT THIS TO REFLECT THE SYMPTOM
+
+sx_input_list = {'chx','cex','cmx','cup','clp'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
 perdur_input = 10; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 

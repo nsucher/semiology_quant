@@ -1,4 +1,4 @@
-function max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,npt,hem,dst_radius,minnumpts,opscea_path,data_path,mp_count)
+function max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,npt,hem,dst_radius,minnumpts,opscea_path,data_path,mp_count)
 
 
 % This is all in MNI coordinates (MNI mesh for vertices, and the MNI warped electrodes, which we can call clinical_elecs_all_warped.mat file)
@@ -70,9 +70,14 @@ percentPositive= round(nptPositive./nptAtVerts * length(cm_percent));
 % percentPositive= round(nptPositive./nptAtVerts * length(pink_lemonade)); 
 
 
+fig_name_vert_pos = [sx_input{1,1}, ' ', num2str(minnumpts), ' patients significant positive activity change'];
+
 % % PINK LEMONADE BRAIN OF % OF PATIENTS WITH POSITIVE ACTIVITY
 % % 
-figure('color','w','position',[230 171 1440 796],'Name',[num2str(minnumpts), ' patients - significant positive activity change']);
+
+
+
+figure('color','w','position',[230 171 1440 796],'Name', fig_name_vert_pos);
 getbrain4_ns('MNI','',1,0,hem,opscea_path,data_path) %plot empty brain
 shading interp
 axis equal; axis off; set(gca,'clipping','off'); lightsout; litebrain(hem,.75)
@@ -91,14 +96,14 @@ for v_m = 1:nvert %for this specific vertex
         disp([num2str(round(v_m/nvert*100,2)) '%'])
     end
 end
-
-
-
+%SAVE FIGURE WITH COORDINATES
+exportgraphics(gcf, [fig_name_vert_pos, '.png'])
 
 %  BRAIN OF NUMBER OF PATIENTS NEAR EACH ELECTRODE
+fig_name_vert_num = [sx_input{1,1}, ' ', num2str(minnumpts), ' patients electrode coverage'];
 
 if mp_count == 1
-    figure('color','w','position',[230 171 1440 796]);
+    figure('color','w','position',[230 171 1440 796],'Name',fig_name_vert_num);
     cm_npt = cbrewer2('Purples',7,'seq');
     
     
@@ -116,6 +121,9 @@ if mp_count == 1
         end
     end
 end
+
+exportgraphics(gcf, [fig_name_vert_num, '.png'])
+
 
 cd(opscea_path) %place so you don't have to change paths every time you run the code
 

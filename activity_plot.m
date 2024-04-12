@@ -57,7 +57,9 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
     
         sign_now = sign_m{1,1};
         
-        figure('Name',[pt_sxmx_name ' ' ptsz_name ': activity change'],'color','w'); % different figure for each symptom/mode combination
+        fig_name_act = [pt_sxmx_name ' ' ptsz_name ': activity change'];
+
+        figure('Name',fig_name_act,'color','w'); % different figure for each symptom/mode combination
         subplot(2,1,1)
 
         cd(opscea_path);
@@ -249,3 +251,4 @@ if length(sz_w8s) > length(szxyz)
     sz_w8s = sz_w8s(1:length(szxyz));
 end
 
+exportgraphics(gcf, [fig_name_act,'.png'])

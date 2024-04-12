@@ -48,8 +48,8 @@ Mpercent = Mptsig_req'./Mnpt_req'*100;
 Mpercent(Mpercent == 0) = 2;
 Mpercent(isnan(Mpercent)) = 0;
 
-
-figure('name',num2str(minnumpts),'color','w','position',[230 171 1000 796]);
+fig_name_bin = [pt_sxmx_name ' ' ptsz_name ': grid ' num2str(minnumpts)];
+figure('name',fig_name_bin,'color','w','position',[230 171 1000 796]);
 
 % PLOT GRID FOR GLASS BRAIN
 ylim(Y([1 end])); zlim(Z([1 end])); %in same axis limits for orientation
@@ -108,5 +108,8 @@ cm_npt = [.85 .85 .85; cm_npt];
 colormap(ax2,cm_npt)
 
 num_pt_data = flipud(Mnpt');
+
+exportgraphics(gcf, [fig_name_bin, '.png'])
+
 
 k = 1;

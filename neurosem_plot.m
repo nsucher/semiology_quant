@@ -26,7 +26,7 @@ sxmx_count = 0;
 %     'Right-Amygdala','Left-Amygdala','entorhinal','bankssts','fusiform', 'lingual'];
 % 
 % % CHOOSE RADIUS HERE
-% dst_radius = 10; % minimum distance in mm from electrode to each vertex
+dst_radius  = 10; % minimum distance in mm from electrode to each vertex
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -151,7 +151,7 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
 end 
  
 
-close all 
+% close all 
 
 mp_count = 0;
 
@@ -163,8 +163,8 @@ for minnumpts = 1:min_pt
     bin_bilat %pixel plot of collapsed bilateral hemisphere 
 
     % PAPER: FIGURE __/ POSTER: APPROACH 2 FIGURES VERTEX BY VERTEX
-    % max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on right hemisphere of brain
-    % max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on left hemisphere of brain
+    max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on right hemisphere of brain
+    max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on left hemisphere of brain
 
 end
 delete mp_count
