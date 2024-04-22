@@ -48,13 +48,17 @@ for sx_i = 1:length(sx_input_list)
     sx_input = sx_input_list(sx_i);
     % [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
     [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz,env_path);
+    yes_plot = 1; %1 = plot it, 0 = don't plot
+    [plot_start,plot_end] = mondrian_plot(sx_input,lat_sxmx(sx_i),perdur_input,yes_plot,opscea_path,data_path);
+    OPSCEA_sem_LL(sx_input,lat_sxmx(sx_i),1,sx_plot,plot_start,plot_end,opscea_path,data_path) 
 end
 
-uber_lat = lat_sxmx{uber_i}(1); %laterality of focused seizure
+% uber_lat = lat_sxmx{uber_i}(1); %laterality of focused seizure
 
 % SYMPTOM INDEX AS TIME SERIES (MONDRIAN PLOT)
-yes_plot = 1; %1 = plot it, 0 = don't plot
-[sem_start,plot_start,plot_end] = mondrian_plot(uber_ptsz,uber_lat,perdur_input,yes_plot,opscea_path,data_path);
-
-% OPSCEA ICEEG, LINE LENGTH TRANSFORM AS PLOT AND 3D BRAIN HEATMAP
-OPSCEA_sem_LL(uber_ptsz,uber_lat,1,sx_plot,plot_start,plot_end,opscea_path,data_path) 
+% yes_plot = 1; %1 = plot it, 0 = don't plot
+% 
+% [sem_start,plot_start,plot_end] = mondrian_plot(uber_ptsz,uber_lat,perdur_input,yes_plot,opscea_path,data_path);
+% 
+% % OPSCEA ICEEG, LINE LENGTH TRANSFORM AS PLOT AND 3D BRAIN HEATMAP
+% OPSCEA_sem_LL(uber_ptsz,uber_lat,1,sx_plot,plot_start,plot_end,opscea_path,data_path) 
