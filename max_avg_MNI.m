@@ -70,7 +70,7 @@ percentPositive= round(nptPositive./nptAtVerts * length(cm_percent));
 % percentPositive= round(nptPositive./nptAtVerts * length(pink_lemonade)); 
 
 
-fig_name_vert_pos = [sx_input{1,1}, ' ', num2str(minnumpts), ' patients significant positive activity change'];
+fig_name_vert_pos = [sx_input{1,1}, ' ', num2str(minnumpts), ' patients significant positive activity change', hem];
 
 % % PINK LEMONADE BRAIN OF % OF PATIENTS WITH POSITIVE ACTIVITY
 % % 
@@ -100,7 +100,7 @@ end
 exportgraphics(gcf, [fig_name_vert_pos, '.png'])
 
 %  BRAIN OF NUMBER OF PATIENTS NEAR EACH ELECTRODE
-fig_name_vert_num = [sx_input{1,1}, ' ', num2str(minnumpts), ' patients electrode coverage'];
+fig_name_vert_num = [hem, ' ', sx_input{1,1}, ' ', num2str(minnumpts), ' patients electrode coverage'];
 
 if mp_count == 1
     figure('color','w','position',[230 171 1440 796],'Name',fig_name_vert_num);
