@@ -1,4 +1,4 @@
-function [sem_start,plot_start,plot_end] = mondrian_plot(uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path)
+function [sem_start,plot_start,plot_end] = mondrian_plot(sx_input,uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
@@ -35,7 +35,7 @@ if yes_plot
         position = feature_el(3);
         
         % Laterality
-        if strcmpi(laterality,uber_lat) % plot only contralateral symptoms
+        if strcmpi(laterality,uber_lat{1}(1)) % plot only contralateral symptoms
         % Anatomy
             switch anatomy 
                 case 'lu' 
@@ -125,7 +125,9 @@ if yes_plot
             y_label_names{sx_count} = [full_anat ' ' full_pos];
 
         end
-        
+        if strcmpi(sx_input{1}(2:3),feature_el(2:3))
+            sx_col = i;
+        end
 
     end           
 
@@ -141,12 +143,15 @@ if yes_plot
     t_sec = rows * .2; %convert to sec 
  
     first_auto = [];
+    sx_auto = [];
     last_auto = [];
 
     first_tonic = [];
+    sx_tonic = [];
     last_tonic = [];
 
     first_clonic = [];
+    sx_clonic = [];
     last_clonic = [];
 
     cd(opscea_path)
@@ -177,15 +182,38 @@ if yes_plot
 
     end
 
+    if ismember(1,nums_t_mat(:,sx_col))
+        sx_auto = find(clean_mat(:,sx_col) == 1,1,'first');
+    end
+
+    if ismember(2,nums_t_mat(:,sx_col))
+        sx_tonic = find(clean_mat(:,sx_col) == 2,1,'first');
+    end
+
+    if ismember(3,nums_t_mat(:,sx_col))
+        sx_clonic = find(clean_mat(:,sx_col) == 3,1,'first');
+    end
+
+
     bin_any = any(clean_mat);
 
     % -----------------------------------------------------------------
     % 6. Plot with ImageSC
 
     % start and stop from symptom onset and end
-    sem_start = round(min([first_auto(first_auto > 0) first_tonic(first_tonic>0) first_clonic(first_clonic>0)])*.2);
+    % sem_start = round(min([first_auto(first_auto > 0) first_tonic(first_tonic>0) first_clonic(first_clonic>0)])*.2);
+    % sem_end = round(max([last_auto(last_auto > 0) last_tonic(last_tonic>0) last_clonic(last_clonic>0)])*.2);
+    
+    sem_start = round(min([sx_auto(sx_auto > 0) sx_tonic(sx_tonic>0) sx_clonic(sx_clonic>0)])*.2);
     sem_end = round(max([last_auto(last_auto > 0) last_tonic(last_tonic>0) last_clonic(last_clonic>0)])*.2);
+
+
     plot_start = sem_start-(perdur*6);
+
+    if plot_start < 1
+        plot_start = 1;
+    end
+
     plot_end = sem_end+perdur;
 
     % x, y, and matrix values
@@ -194,7 +222,8 @@ if yes_plot
     y = 1:size(m,1); % number of symptoms (y value)
 
     % Make figure and color
-    figure('Color','w','Name',['Semiology: ' pt '_' sz])
+    sem_plot_name = ['Semiology: ' pt '_' sz];
+    figure('Color','w','Name',sem_plot_name)
     imagesc(semts,y,m)
 
     hold on;
@@ -243,3 +272,5 @@ if yes_plot
 end
 
 line([sem_start sem_start],ylim,'Color','m','LineWidth',2.5)
+
+exportgraphics(gcf, [sem_plot_name,'.png'])

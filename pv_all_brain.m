@@ -78,9 +78,9 @@ exportgraphics(gcf, [fig_name_pv_all_pos, '.png'])
 
 
 %PLOT PURPLE BRAIN WITH # OF PATIENTS WITH MORE THAN 5 ELECTRODES
-fig_name_pv_all_num_pts = 'number of patients with electrode coverage';
+fig_name_pv_all_num_pts = [sx_input{1,1} ':number of patients with electrode coverage'];
 
-figure('Name',,'Color','w'); % different figure for each symptom/mode combination
+figure('Name',fig_name_pv_all_num_pts,'Color','w'); % different figure for each symptom/mode combination
 getbrain4_ns('MNI','',1,0,'r',opscea_path,data_path);
 shading flat
 
