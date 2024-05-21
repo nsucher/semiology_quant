@@ -109,7 +109,8 @@ colormap(ax2,cm_npt)
 
 num_pt_data = flipud(Mnpt');
 
-exportgraphics(gcf, [fig_name_bin, '.png'])
+savefig([cd '/fig files/' fig_name_bin])
+exportgraphics(gcf, [cd '/png files/' fig_name_bin,'.png'])
 
 
 k = 1;

@@ -252,4 +252,5 @@ if length(sz_w8s) > length(szxyz)
     sz_w8s = sz_w8s(1:length(szxyz));
 end
 
-exportgraphics(gcf, [fig_name_act,'.png'])
+savefig([cd '/fig files/' fig_name_act])
+exportgraphics(gcf, [cd '/png files/' fig_name_act,'.png'])

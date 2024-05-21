@@ -93,5 +93,5 @@ for label_i = 1:length(npt_pos)
 %     end 
 end
 
-exportgraphics(gcf, [fig_name_pv_all_num_pts, '.png'])
-
+savefig([cd '/fig files/' fig_name_pv_all_num_pts])
+exportgraphics(gcf, [cd '/png files/' fig_name_pv_all_num_pts,'.png'])

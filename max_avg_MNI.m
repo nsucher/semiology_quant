@@ -70,7 +70,7 @@ percentPositive= round(nptPositive./nptAtVerts * length(cm_percent));
 % percentPositive= round(nptPositive./nptAtVerts * length(pink_lemonade)); 
 
 
-fig_name_vert_pos = [sx_input{1,1}, ' ', num2str(minnumpts), ' patients significant positive activity change', hem];
+fig_name_vert_pos = [hem, ' ', sx_input{1,1}, ' ', num2str(minnumpts), ' patients significant positive activity change'];
 
 % % PINK LEMONADE BRAIN OF % OF PATIENTS WITH POSITIVE ACTIVITY
 % % 
@@ -122,8 +122,8 @@ if mp_count == 1
     end
 end
 
-exportgraphics(gcf, [fig_name_vert_num, '.png'])
-
+savefig([cd '/fig files/' fig_name_vert_num])
+exportgraphics(gcf, [cd '/png files/' fig_name_vert_num,'.png'])
 
 cd(opscea_path) %place so you don't have to change paths every time you run the code
 

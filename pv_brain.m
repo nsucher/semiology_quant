@@ -59,4 +59,5 @@ if any(pos_pv_m)
     end
 end
 
-saveas(gcf, [fig_name_sig,'.png'])
+savefig([cd '/fig files/' fig_name_sig])
+exportgraphics(gcf, [cd '/png files/' fig_name_sig,'.png'])
