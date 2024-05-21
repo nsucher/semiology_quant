@@ -31,6 +31,12 @@ sign_m = {all_m};
 
 cd(opscea_path)
 
+fig_name_act = [pt_sxmx_name ' ' ptsz_name ': activity change'];
+
+figure('Name',fig_name_act,'color','w'); % different figure for each symptom/mode combination
+subplot(2,1,1)
+
+
 if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only 
 
     class_wa = string(class(w8s_array));
@@ -57,10 +63,6 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
     
         sign_now = sign_m{1,1};
         
-        fig_name_act = [pt_sxmx_name ' ' ptsz_name ': activity change'];
-
-        figure('Name',fig_name_act,'color','w'); % different figure for each symptom/mode combination
-        subplot(2,1,1)
 
         cd(opscea_path);
         
@@ -239,7 +241,6 @@ if strcmpi(laterality,pt_sxmx_name(1)) ~= 1 %contralateral only
         sz_w8s = [];
 
     end
-
 end
 
 %TRIM TRAILING NANS

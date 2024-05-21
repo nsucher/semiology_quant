@@ -38,7 +38,7 @@ env_path = join(env_var,""); %path for python environment
 % end
 
 
-sx_input_list = {'chx','cex','cmx','cup','clp'};% EDIT THIS TO REFLECT THE SYMPTOM
+sx_input_list = {'cex','cmx','cup','clp'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
 perdur_input = 10; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 
@@ -48,11 +48,11 @@ for sx_i = 1:length(sx_input_list)
     sx_input = sx_input_list(sx_i);
     % [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,python_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz);
     [sx_plot,lat_sxmx] = neurosem_plot(sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz,env_path);
-    yes_plot = 1; %1 = plot it, 0 = don't plot
-    for man_ptsz = 1:length(manual_ptsz)
-        [sem_start,plot_start,plot_end] = mondrian_plot(sx_input,manual_ptsz{man_ptsz},lat_sxmx(man_ptsz),perdur_input,yes_plot,opscea_path,data_path);
-        OPSCEA_sem_LL(manual_ptsz{man_ptsz},lat_sxmx(sx_i),1,sem_start,plot_start,plot_end,opscea_path,data_path) 
-    end
+    % yes_plot = 1; %1 = plot it, 0 = don't plot
+    % for man_ptsz = 1:length(manual_ptsz)
+    %     [sem_start,plot_start,plot_end] = mondrian_plot(sx_input,manual_ptsz{man_ptsz},lat_sxmx(man_ptsz),perdur_input,yes_plot,opscea_path,data_path);
+    %     OPSCEA_sem_LL(manual_ptsz{man_ptsz},lat_sxmx(sx_i),1,sem_start,plot_start,plot_end,opscea_path,data_path) 
+    % end
 end
 % uber_lat = lat_sxmx{uber_i}(1); %laterality of focused seizure
 

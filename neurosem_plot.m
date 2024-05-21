@@ -1,4 +1,4 @@
-function [sx_plot,lat_sxmx] = neurosem_plot(uber_i,sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz,env_path)
+function [sx_plot,lat_sxmx] = neurosem_plot(sx_input,mx_input,perdur_input,opscea_path,data_path,manual_ptsz,min_elec,min_pt,num_ptsz,env_path)
 
 
 % Function to generate figures analyzing change of neural activity during onset of seizure symptom
@@ -122,9 +122,11 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
 
         [laterality, w8s_array, anat_array, good_mni, first_mx] = pyrunfile("activity_change.py", ["laterality", "w8s_array", "anat_array","good_mni","first_mx"], sxmx_input=pt_sxmx_name, ptsz_input=ptsz_name, perdur_input=perdur_input, opscea_path=opscea_path, data_path=data_path, sz_count=sz_count, sxmx_count=sxmx_count, ptsz_i=ptsz_i, min_elec=min_elec,e_row=e_row,mni_xyz=mni_xyz);
         
-        if ptsz_i == uber_i
-            first_sx_vec(1,ptsz_i) = first_mx;
+        if isa(first_mx,'py.NoneType')
+            first_mx = NaN;
         end
+        
+        first_sx_vec(1,ptsz_i) = first_mx;
       
         good_mni_list = good_mni.tolist();
         good_mni_mat = nan(length(good_mni_list)-1,3);
@@ -147,6 +149,10 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
         sz_nns_mat{1,ptsz_i} =  sz_nns;
         sz_w8s_mat{1,ptsz_i} = sz_w8s; 
         szxyz_mat{1,ptsz_i} = szxyz;
+
+        [sem_start,plot_start,plot_end] = mondrian_plot(mx_input,sx_input,manual_ptsz{ptsz_i},lat_sxmx(ptsz_i),perdur_input,1,opscea_path,data_path);
+        OPSCEA_sem_LL(manual_ptsz{ptsz_i},lat_sxmx(ptsz_i),1,sem_start,plot_start,plot_end,opscea_path,data_path) 
+
     end
 end 
  
@@ -163,8 +169,8 @@ for minnumpts = 1:min_pt
     bin_bilat %pixel plot of collapsed bilateral hemisphere 
 
     % PAPER: FIGURE __/ POSTER: APPROACH 2 FIGURES VERTEX BY VERTEX
-    max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on right hemisphere of brain
-    max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on left hemisphere of brain
+    % max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'r',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on right hemisphere of brain
+    % max_avg_MNI(sx_input, sz_nns_mat,sz_w8s_mat,mni_xyz_cell,num_ptsz,'l',dst_radius,minnumpts,opscea_path,data_path,mp_count) %vertex heatmap on left hemisphere of brain
 
 end
 delete mp_count

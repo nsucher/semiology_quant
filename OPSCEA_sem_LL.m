@@ -33,6 +33,7 @@ function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end
 %     for intracranial seizure localization. In press at Epilepsia.”
 
 %     Updated by Natalia Sucher Dec 24 2023
+sem_plot = sx_plot;
 
 if sx_plot
     if ~exist('showlabels','var')||isempty(showlabels);
@@ -311,9 +312,12 @@ if sx_plot
     nch=length(find(nns)); 
     
     chanorder=1:size(d(nns,:),1); if ~showlabels; chanorder=randperm(size(d(nns,:),1)); end % if desired, blinds user by randomizing channel order
-    figure('color','w','Position',[1 5 1280 700]); 
+    
+    opscea_fig_name = [uber_lat{1}, ' ', uber_ptsz, ': OPSCEA'];
+    figure('Name',opscea_fig_name,'color','w','Position',[1 5 1280 700]); 
     % frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
     round_sx_plot = floor(sx_plot);
+    % for i = sem_plot
     for i = round_sx_plot
         subplot(1,1,1); %clears all axes, to start fresh each frame
         w8s=LL(:,i); 
@@ -376,7 +380,7 @@ if sx_plot
               new_w8s = w8s;
               new_w8s(noneed,:) = [];
               subplot(2,100,62:100)
-              LL_plot(new_anat,new_LL,ts,sx_plot,plot_start,plot_end,sfx,S.cax);
+              LL_plot(new_anat,new_LL,ts,sx_plot,sem_plot, plot_start,plot_end,sfx,S.cax);
 
              
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,5 +468,10 @@ if sx_plot
             end
         end  
      end
-   end
 end
+
+exportgraphics(gcf, [opscea_fig_name,'.png'])
+
+end
+
+

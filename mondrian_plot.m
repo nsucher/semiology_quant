@@ -1,4 +1,4 @@
-function [sem_start,plot_start,plot_end] = mondrian_plot(sx_input,uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path)
+function [sem_start,plot_start,plot_end] = mondrian_plot(mx_input,sx_input,uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
@@ -23,13 +23,15 @@ if yes_plot
     % ----------------------------------------------------------------
     % 2. For loop to separate string features 
     y_label_names = {};      
-    feature_el_vec = []; 
+    % feature_el_vec = []; 
     sx_sem_matrix = [];
     sx_count = 0;
 
-    for i = 1:t_cols                                
-        feature_el=sem_matrix.Properties.VariableNames{i}; %JK
-        feature_el_vec = [feature_el_vec;sem_matrix.Properties.VariableNames{i}];
+
+    for i = 1:t_cols
+        cd('/scratch/semiology_quant');
+        feature_el= sem_matrix.Properties.VariableNames{i}; %JK
+        % feature_el_vec = [feature_el_vec;sem_matrix.Properties.VariableNames{i}];
         laterality = feature_el(1);
         anatomy = feature_el(1:2);
         position = feature_el(3);
@@ -125,8 +127,9 @@ if yes_plot
             y_label_names{sx_count} = [full_anat ' ' full_pos];
 
         end
-        if strcmpi(sx_input{1}(2:3),feature_el(2:3))
+        if strcmpi(sx_input{1}(2:3),feature_el(2:3)) % if the symptom is the one being analyzed
             sx_col = i;
+            uber_lat1 = feature_el(1); % laterality of symptom onset that is being analyzed
         end
 
     end           
@@ -210,11 +213,14 @@ if yes_plot
 
     plot_start = sem_start-(perdur*6);
 
-    if plot_start < 1
+    if plot_start < 1 | isempty(plot_start)
         plot_start = 1;
+    %     plot_end = sem_end;
+    % else    
+    %     plot_end = sem_end+perdur;
     end
 
-    plot_end = sem_end+perdur;
+    plot_end = sem_end;
 
     % x, y, and matrix values
     m=clean_mat(:,bin_any~=0)'; % matrix of seizure symptom mode over time
@@ -222,7 +228,7 @@ if yes_plot
     y = 1:size(m,1); % number of symptoms (y value)
 
     % Make figure and color
-    sem_plot_name = ['Semiology: ' pt '_' sz];
+    sem_plot_name = [uber_lat{1} ' ' pt '_' sz ': semiology plot'];
     figure('Color','w','Name',sem_plot_name)
     imagesc(semts,y,m)
 
