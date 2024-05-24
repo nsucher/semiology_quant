@@ -72,18 +72,6 @@ if yes_plot
                     full_anat = 'R Mouth'; 
                     sx_count = sx_count + 1; 
                     sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-    %             case 'ht'; full_anat = 'Head Turn'; sx_count = sx_count + 1; sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-    %             case 'tt'; full_anat = 'Torso Turn';
-    %             case 'vx'; full_anat = 'Voice';
-    %             case 'gm'; full_anat = 'Gyratory Movement';
-    %             case 'rx'; full_anat = 'Rocking';
-    %             case 'bb'; full_anat = 'Bimanual Bipedal Automatism';
-    %             case 'wx'; full_anat = 'Walking';
-    %             case 'fx'; full_anat = 'Falling';
-    %             case 'px'; full_anat = 'Pedaling';
-    %             case 'ln'; full_anat = 'Left Hand';
-    %                 
-    %             case 'rn'; full_anat = 'Right Hand';
                 case 'll' 
                     full_anat = 'L Leg';
                     sx_count = sx_count + 1; 
@@ -92,14 +80,6 @@ if yes_plot
                     full_anat = 'R Leg';
                     sx_count = sx_count + 1; 
                     sx_sem_matrix(:,sx_count) = sem_matrix{:,i};
-    %             case 'lf'; full_anat = 'Left Foot';
-    %             case 'rf'; full_anat = 'Right Foot';
-    %             case 'br'; full_anat = 'Behavioral Arrest';
-    %             case 'fa'; full_anat = 'Facial Automatism';
-    %             case 'oa'; full_anat = 'Oral Automatism';
-    %             case 'fa'; full_anat = 'Quadritonic';
-    %             case 'cg'; full_anat = 'Chapeau de Gendarme';
-    %             case 'fe'; full_anat = 'Facial Expression';
             end
         
     
@@ -109,17 +89,6 @@ if yes_plot
                     full_pos = 'Proximal';
                 case 'd' 
                     full_pos = 'Distal';
-    %             case 'l'; full_pos = 'Left';
-    %             case 'r'; full_pos = 'Right';
-    %             case 'c'; full_pos = 'Center';
-    %             case 't'; full_pos = 'Twitch';
-    %             case 'y'; full_pos = 'Pull'; %y stands for yank so pull doesn't get confused with proximal
-    %             case 's'; full_pos = 'Superior';
-    %             case 'i'; full_pos = 'Inferior';
-    %             case 'f'; full_pos = 'Forward';
-    %             case 'b'; full_pos = 'Backward';
-    %             case 'n'; full_pos = 'Nonverbal';
-    %             case 'v'; full_pos = 'Verbal';
                 case 'x' 
                     full_pos = [];
             end
@@ -204,8 +173,6 @@ if yes_plot
     % 6. Plot with ImageSC
 
     % start and stop from symptom onset and end
-    % sem_start = round(min([first_auto(first_auto > 0) first_tonic(first_tonic>0) first_clonic(first_clonic>0)])*.2);
-    % sem_end = round(max([last_auto(last_auto > 0) last_tonic(last_tonic>0) last_clonic(last_clonic>0)])*.2);
     
     sem_start = round(min([sx_auto(sx_auto > 0) sx_tonic(sx_tonic>0) sx_clonic(sx_clonic>0)])*.2);
     sem_end = round(max([last_auto(last_auto > 0) last_tonic(last_tonic>0) last_clonic(last_clonic>0)])*.2);
@@ -213,11 +180,10 @@ if yes_plot
 
     plot_start = sem_start-(perdur*6);
 
-    if plot_start < 1 | isempty(plot_start)
+    if plot_start < 1 
         plot_start = 1;
-    %     plot_end = sem_end;
-    % else    
-    %     plot_end = sem_end+perdur;
+    elseif isempty(plot_start)
+        plot_start = 1;
     end
 
     plot_end = sem_end;
@@ -277,6 +243,9 @@ if yes_plot
 
 end
 
-line([sem_start sem_start],ylim,'Color','m','LineWidth',2.5)
+if ~isempty(sem_start)
+    line([sem_start sem_start],ylim,'Color','m','LineWidth',2.5)
+end
 
-exportgraphics(gcf, [sem_plot_name,'.png'])
+savefig([cd '/fig files/', sem_plot_name])
+exportgraphics(gcf, [cd '/png files/', sem_plot_name '.png'])

@@ -32,7 +32,10 @@ function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end
 %     Accuracy of omni-planar and surface casting of epileptiform activity
 %     for intracranial seizure localization. In press at Epilepsia.”
 
-%     Updated by Natalia Sucher Dec 24 2023
+%     Updated by Natalia Sucher May 24 2024
+opscea_fig_name = [uber_lat{1}, ' ', uber_ptsz, ': OPSCEA'];
+figure('Name',opscea_fig_name,'color','w','Position',[1 5 1280 700]);
+
 sem_plot = sx_plot;
 
 if sx_plot
@@ -313,8 +316,6 @@ if sx_plot
     
     chanorder=1:size(d(nns,:),1); if ~showlabels; chanorder=randperm(size(d(nns,:),1)); end % if desired, blinds user by randomizing channel order
     
-    opscea_fig_name = [uber_lat{1}, ' ', uber_ptsz, ': OPSCEA'];
-    figure('Name',opscea_fig_name,'color','w','Position',[1 5 1280 700]); 
     % frametimpoints=jumpto:S.fram:ntp-sfx*S.iceegwin; % timepoint index of each frame to be rendered
     round_sx_plot = floor(sx_plot);
     % for i = sem_plot
@@ -470,7 +471,8 @@ if sx_plot
      end
 end
 
-exportgraphics(gcf, [opscea_fig_name,'.png'])
+savefig([cd '/fig files/', opscea_fig_name])
+exportgraphics(gcf, [cd '/png files/', opscea_fig_name '.png'])
 
 end
 

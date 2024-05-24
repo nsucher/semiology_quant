@@ -97,7 +97,9 @@ for v_m = 1:nvert %for this specific vertex
     end
 end
 %SAVE FIGURE WITH COORDINATES
-exportgraphics(gcf, [fig_name_vert_pos, '.png'])
+savefig([cd '/fig files/' fig_name_vert_pos])
+exportgraphics(gcf, [cd '/png files/' fig_name_vert_pos,'.png'])
+
 
 %  BRAIN OF NUMBER OF PATIENTS NEAR EACH ELECTRODE
 fig_name_vert_num = [hem, ' ', sx_input{1,1}, ' ', num2str(minnumpts), ' patients electrode coverage'];
