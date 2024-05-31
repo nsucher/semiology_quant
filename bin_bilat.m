@@ -48,7 +48,7 @@ Mpercent = Mptsig_req'./Mnpt_req'*100;
 Mpercent(Mpercent == 0) = 2;
 Mpercent(isnan(Mpercent)) = 0;
 
-fig_name_bin = [pt_sxmx_name ' ' ptsz_name ': grid ' num2str(minnumpts)];
+fig_name_bin = [pt_sxmx_name ': grid ' num2str(minnumpts)];
 figure('name',fig_name_bin,'color','w','position',[230 171 1000 796]);
 
 % PLOT GRID FOR GLASS BRAIN
