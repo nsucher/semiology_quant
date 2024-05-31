@@ -1,4 +1,4 @@
-function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end,opscea_path,data_path)
+function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end,opscea_path,data_path,newfig)
 % EXAMPLE USAGE: OPSCEA('UCSF1','01',1,0)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
@@ -33,8 +33,11 @@ function OPSCEA_sem_LL(uber_ptsz,uber_lat,showlabels,sx_plot,plot_start,plot_end
 %     for intracranial seizure localization. In press at Epilepsia.”
 
 %     Updated by Natalia Sucher May 24 2024
-opscea_fig_name = [uber_lat{1}, ' ', uber_ptsz, ': OPSCEA'];
-figure('Name',opscea_fig_name,'color','w','Position',[1 5 1280 700]);
+
+if newfig; 
+    opscea_fig_name = [uber_lat{1}, ' ', uber_ptsz, ': OPSCEA'];
+    figure('Name',opscea_fig_name,'color','w','Position',[1 5 1280 700]); 
+end
 
 sem_plot = sx_plot;
 
@@ -320,7 +323,7 @@ if sx_plot
     round_sx_plot = floor(sx_plot);
     % for i = sem_plot
     for i = round_sx_plot
-        subplot(1,1,1); %clears all axes, to start fresh each frame
+        %subplot(1,1,1); %clears all axes, to start fresh each frame
         w8s=LL(:,i); 
         w8s(~nns)=0; %make weights for electrodes, and set NaNs (bad channels) to zero
         for j=1:size(plt,1)
@@ -466,13 +469,13 @@ if sx_plot
                     colormap_ns(gca,S.cm); set(gca,'Clipping','off')
                     clear srfplot
               end
-            end
+         end
         end  
      end
 end
 
-savefig([cd '/fig files/', opscea_fig_name])
-exportgraphics(gcf, [cd '/png files/', opscea_fig_name '.png'])
+savefig([cd '/fig files/', get(gcf,'name')])
+exportgraphics(gcf, [cd '/png files/', get(gcf,'name') '.png'])
 
 end
 

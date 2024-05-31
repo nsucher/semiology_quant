@@ -1,4 +1,4 @@
-function [sem_start,plot_start,plot_end] = mondrian_plot(mx_input,sx_input,uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path)
+function [sem_start,plot_start,plot_end] = mondrian_plot(mx_input,sx_input,uber_ptsz,uber_lat,perdur,yes_plot,opscea_path,data_path,newfig)
 
 % pt is a string such as 'UCSF4' or 'JaneDoe', acts as a prefix for files below
 % sz is a string for '01' or other number of seizure for your patient, acts
@@ -193,9 +193,12 @@ if yes_plot
     semts=linspace(1,t_sec,rows); % time progression (x value)
     y = 1:size(m,1); % number of symptoms (y value)
 
-    % Make figure and color
-    sem_plot_name = [uber_lat{1} ' ' pt '_' sz ': semiology plot'];
-    figure('Color','w','Name',sem_plot_name)
+    if newfig
+        % Make figure and color
+        sem_plot_name = [uber_lat{1} ' ' pt '_' sz ': semiology plot'];
+        figure('Color','w','Name',sem_plot_name)
+    end
+
     imagesc(semts,y,m)
 
     hold on;
@@ -204,7 +207,7 @@ if yes_plot
     xlim([plot_start plot_end])
 
     % color
-    colorbar('location','southoutside','Ticks',.5:1:4.5,'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
+    cocolormaplorbar('location','southoutside','Ticks',.5:1:4.5,'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
     cmap = [0.8,0.8,0.8;1,1,0;0,.4,1;.9,0,0;1,1,1]; % 0=Grey, 1=yellow, 2=blue, 3=red, 4=white
     colormap(gca,cmap);
 
@@ -247,5 +250,5 @@ if ~isempty(sem_start)
     line([sem_start sem_start],ylim,'Color','m','LineWidth',2.5)
 end
 
-savefig([cd '/fig files/', sem_plot_name])
-exportgraphics(gcf, [cd '/png files/', sem_plot_name '.png'])
+% savefig([cd '/fig files/', sem_plot_name])
+% exportgraphics(gcf, [cd '/png files/', sem_plot_name '.png'])

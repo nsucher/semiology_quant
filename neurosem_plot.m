@@ -150,8 +150,14 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
         sz_w8s_mat{1,ptsz_i} = sz_w8s; 
         szxyz_mat{1,ptsz_i} = szxyz;
 
-        [sem_start,plot_start,plot_end] = mondrian_plot(mx_input,sx_input,manual_ptsz{ptsz_i},lat_sxmx(ptsz_i),perdur_input,1,opscea_path,data_path);
-        OPSCEA_sem_LL(manual_ptsz{ptsz_i},lat_sxmx(ptsz_i),1,sem_start,plot_start,plot_end,opscea_path,data_path) 
+        opscea_fig_name = [lat_sxmx{ptsz_i}, ' ', manual_ptsz{ptsz_i}, ': OPSCEA'];
+        figure('Name',opscea_fig_name,'color','w','Position',[1 5 1280 700]); 
+        subplot(2,100,162:200)
+        [sem_start,plot_start,plot_end] = mondrian_plot(mx_input,sx_input,manual_ptsz{ptsz_i},lat_sxmx(ptsz_i),perdur_input,1,opscea_path,data_path,0);
+        OPSCEA_sem_LL(manual_ptsz{ptsz_i},lat_sxmx(ptsz_i),1,sem_start,plot_start,plot_end,opscea_path,data_path,0) 
+        subplot(2,100,162:200); 
+        cmap = [0.8,0.8,0.8;1,1,0;0,.4,1;.9,0,0;1,1,1]; % 0=Grey, 1=yellow, 2=blue, 3=red, 4=white
+        colormap(gca,cmap);
 
     end
 end 
