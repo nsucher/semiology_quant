@@ -207,7 +207,7 @@ if yes_plot
     xlim([plot_start plot_end])
 
     % color
-    cocolormaplorbar('location','southoutside','Ticks',.5:1:4.5,'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
+    colorbar('location','southoutside','Ticks',.5:1:4.5,'TickLabels',{'No Motion','Automatism','Tonic','Clonic','Out of Video'}); %Place colorbar beneath graph; Hard code tick location by summing up # of values used (0-4 in this case)            
     cmap = [0.8,0.8,0.8;1,1,0;0,.4,1;.9,0,0;1,1,1]; % 0=Grey, 1=yellow, 2=blue, 3=red, 4=white
     colormap(gca,cmap);
 

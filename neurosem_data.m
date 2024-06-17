@@ -257,8 +257,8 @@ minnumpts=4;
 pv_all_brain(lat_sxmx,length(manual_ptsz),num_elecs,min_elec,minnumpts) %p value heatmap of combined total patients by neuroanatomical region
 
 sx_sec = first_sx_vec/5;
-% max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius,minnumpts) %vertex heatmap on right hemisphere of brain
-% 
-% max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius,minnumpts) %vertex heatmap on left hemisphere of brain
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'r',dst_radius,minnumpts) %vertex heatmap on right hemisphere of brain
+
+max_avg_MNI(sz_nns_mat,sz_w8s_mat,mni_xyz_cell,length(manual_ptsz),'l',dst_radius,minnumpts) %vertex heatmap on left hemisphere of brain
 
 toc

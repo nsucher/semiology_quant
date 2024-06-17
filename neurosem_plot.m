@@ -163,7 +163,7 @@ for mx_i = 1:length(mx_input) % for loop throughout modes
 end 
  
 
-% close all 
+close all 
 
 mp_count = 0;
 
@@ -186,8 +186,8 @@ cd(opscea_path)
 pv_all_brain(sx_input,lat_sxmx,num_ptsz,num_elecs,min_elec,min_pt,opscea_path,data_path) %p value heatmap of combined total patients by neuroanatomical region
 
 % [sem_start,plot_start,plot_end] = mondrian_plot(uber_pt,uber_sz,10,ts_sx/5,1,opscea_path,data_path);
-
-%OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
+% 
+% OPSCEA_sem_LL(uber_pt,uber_sz,1,sem_start,ts_sx/5,plot_start,plot_end) 
 sx_sec = first_sx_vec/5;
 sx_plot = sx_sec(1);
 % 
