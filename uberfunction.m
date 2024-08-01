@@ -4,7 +4,9 @@
 %add mainpath variable (add to getbrain_ns and any ns or JON functions)
 
 %INITIALIZE VARIABLES
-manual_ptsz = {'EC91_03','EC96_01','EC107_01','EC133_03', 'EC166_01','EC228_03','EC229_02'}; % specify which patient and seizure
+% manual_ptsz = {'EC91_03','EC96_01','EC107_01','EC133_03', 'EC166_01','EC228_03','EC229_02'}; % specify which patient and seizure
+manual_ptsz = {'EC229_02'}; % specify which patient and seizure
+
 num_ptsz = length(manual_ptsz);
 
 uber_pt = 'EC91'; %specific patient to show mondrian plot and opscea line length z-score graph for (in addition to all patients analyzed in neurosem_data)
@@ -38,7 +40,7 @@ env_path = join(env_var,""); %path for python environment
 % end
 
 
-sx_input_list = {'clp'};% EDIT THIS TO REFLECT THE SYMPTOM
+sx_input_list = {'chx'};% EDIT THIS TO REFLECT THE SYMPTOM
 mx_input = {'2'};% EDIT MODE (1 = AUTOMATISM, 2 = TONIC, 3 = CLONIC)
 perdur_input = 10; % EDIT # OF SECONDS BEFORE AND AFTER SYMPTOM TO ANALYZE
 

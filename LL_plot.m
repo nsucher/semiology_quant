@@ -1,4 +1,4 @@
-function LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,cax)
+function LL_plot(new_anat,new_LL,ts,to_plot,sem_plot, plot_start,plot_end,sfx,cax)
 %     Created by Natalia Sucher and Jon Kleen May 10 2022, Updated May 26
 %     2022 by NS
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        %Electrode Activity
@@ -106,6 +106,6 @@ function LL_plot(new_anat,new_LL,ts,to_plot,plot_start,plot_end,sfx,cax)
 
 
            hold on; plot(xlim,[u2_s u2_s],'w-'); %white horizontal lines separating brain regions
-           plot([to_plot to_plot],ylim,'m-') % vertical magenta line at specified symptom onset
+           % plot([to_plot to_plot],ylim,'m-') % vertical magenta line at specified symptom onset
        
-            
+           plot([sem_plot sem_plot],ylim,'m-') % vertical magenta line at specified symptom onset
