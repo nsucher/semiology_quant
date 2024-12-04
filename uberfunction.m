@@ -4,8 +4,11 @@
 %add mainpath variable (add to getbrain_ns and any ns or JON functions)
 
 %INITIALIZE VARIABLES
+
+manual_ptsz = {'EC166_01','EC228_03'}; % specify which patient and seizure
+
 % manual_ptsz = {'EC91_03','EC96_01','EC107_01','EC133_03', 'EC166_01','EC228_03','EC229_02'}; % specify which patient and seizure
-manual_ptsz = {'EC229_02'}; % specify which patient and seizure
+% manual_ptsz = {'EC229_02'}; % specify which patient and seizure
 
 num_ptsz = length(manual_ptsz);
 

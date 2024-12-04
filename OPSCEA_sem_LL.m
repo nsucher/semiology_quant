@@ -150,6 +150,7 @@ if sx_plot
       cm=prm{strcmp('cm',fields_SZ)};
       switch cm; case 'cmOPSCEAcool'; cm=cmOPSCEAcool; 
                  case 'cmOPSCEAjet'; cm=cmOPSCEAjet; 
+                 case 'cmSz3D_v3';   cm=cmSz3D_v3;
       end
     S.cm=cm; %colormap to use for heatmap
     S.iceegwin=str2double(prm{strcmp('iceegwin',fields_SZ)}); %how much trace-based ICEEG to view at a time in the ICEEG window
@@ -383,27 +384,29 @@ if sx_plot
 
               new_w8s = w8s;
               new_w8s(noneed,:) = [];
-              subplot(2,100,62:100)
-              LL_plot(new_anat,new_LL,ts,sx_plot,sem_plot, plot_start,plot_end,sfx,S.cax);
+              ax1 = subplot(2,100,62:100);
+              LL_plot(new_anat,new_LL,ts,sx_plot,sem_plot, plot_start,plot_end,sfx,S.cax, ax1);
 
              
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-          case 'COLORBAR' 
-                    colormap_ns(gca,S.cm(ceil(size(S.cm,1)/2):end,:)); %Z-scores above baseline
+          % case 'COLORBAR' 
+          %           cb=colorbar; 
+          % 
+          %           cb.Ticks=[.5 1]; cb.Limits=[.5 1];
+          %           cb.TickLabels={0,num2str(S.cax(2))};
+          %           cb.FontSize=11; cb.Location='west'; 
+          % 
+          %           colormap(cb,S.cm(ceil(size(S.cm,1)/2):end,:)); %Z-scores above baseline
+          % 
+          %           hold on; plot(1,1); title(''); axis off; 
 
-                    hold on; plot(1,1); title(''); axis off; 
 
-                    cb=colorbar; 
-
-                    cb.Ticks=[.5 1]; cb.Limits=[.5 1];
-                    cb.TickLabels={0,num2str(S.cax(2))};
-                    cb.FontSize=11; cb.Location='west'; 
 % ylabel(cb,'z-scores','fontsize',12);
 
 
           case 'SURFACE' % plotting surfaces only
-              if matches(surfaces{j},'rcortex')
+              if matches(surfaces{j},'rcortex') || matches(surfaces{j},'lcortex') || matches(surfaces{j},'cortex')
                   hold off; 
                   srf=regexp(surfaces{j},',','split'); % list the specific surfaces wanted for this subplot
                   srfalpha=regexp(surfacesopacity{j},',','split'); % list their corresponding opacities (values from 0 to 1; 0=invisible, 1=opaque)
@@ -418,10 +421,10 @@ if sx_plot
                         switch srf{s}; %see below for case "wholebrain"s
                             case 'rcortex'; srfplot=Rcrtx; 
                             case 'lcortex'; srfplot=Lcrtx; 
-                            case 'rhipp';   srfplot=Rhipp; 
-                            case 'lhipp';   srfplot=Lhipp; 
-                            case 'ramyg';   srfplot=Ramyg; 
-                            case 'lamyg';   srfplot=Lamyg; 
+                            % case 'rhipp';   srfplot=Rhipp; 
+                            % case 'lhipp';   srfplot=Lhipp; 
+                            % case 'ramyg';   srfplot=Ramyg; 
+                            % case 'lamyg';   srfplot=Lamyg; 
                         end
                       end
 
@@ -466,7 +469,7 @@ if sx_plot
                     zoom(pltzoom(j)); 
                     hold on;                         
                     cd(opscea_path)
-                    colormap_ns(gca,S.cm); set(gca,'Clipping','off')
+                    colormap(gca,S.cm); set(gca,'Clipping','off')
                     clear srfplot
               end
          end
